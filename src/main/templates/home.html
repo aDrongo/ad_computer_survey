@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Ping Survey</title>
+    <link rel="stylesheet" href="{{ url_for('static',    filename='css/template.css') }}">
+  </head>
+  <body>
+    <h1>Ping Survey </h1>
+    {% for location in locations %}
+    <table>
+      <tr>
+        <th>Online</th><th>ID</th><th>IP</th><th>Response Time</th><th>Timestamp</th><th>Location</th><th>Group</th><th>OS</th><th>Version</th>
+      </tr>
+      {% for item in data %}
+      {% if item[5] == location[0] %}
+      <tr>
+      <td class="{{ 'good' if item[2] == 0 else 'bad' }}">{{item[2]}}</td>
+      <td>{{item[0]}}</td>
+      <td>{{item[1]}}</td>
+      <td>{{item[3]}}</td>
+      <td>{{item[4]}}</td>
+      <td>{{item[5]}}</td>
+      <td>{{item[6]}}</td>
+      <td>{{item[7]}}</td>
+      <td>{{item[8]}}</td>
+      </tr>
+      {% endif %}
+      {% endfor %}
+    </table>
+    {% endfor %}
+    {% block content %}
+    {% endblock %}
+
+  </body>
+</html>
