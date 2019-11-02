@@ -3,6 +3,7 @@ import sqlalchemy as db
 from collections import Counter
 from jinja2 import Template
 import operator
+import sys
 
 
 def rename(var):
@@ -17,16 +18,17 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-    host='localhost'
     db_env = 'database.sqlite'
 
     try:
-        engine = db.create_engine(f'sqlite:///{db_env}')
+        engine = db.create_engine(f'sqlite:///./{db_env}')
         connection = engine.connect()
-        metadata = db.MetaData()
+        metadata = db.MetaData(bind=connection, reflect=True)
         print('Connected to DB')
     except Exception as e:
         print(e)
+        sys.exit(e)
+    # print(metadata.tables)
     data = connection.execute("SELECT * FROM 'table' ORDER BY 'group' DESC;")
     data = data.fetchall()
     data.sort(key= operator.itemgetter(6))
@@ -34,6 +36,7 @@ def home():
     locations = locations.fetchall()
     locations.sort(key= operator.itemgetter(0))
     return render_template("home.html", data=data, locations=locations)
+    # return render_template("home.html")
 
 if __name__ == "__main__":
     app.run(debug=True)

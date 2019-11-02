@@ -11,10 +11,10 @@
     <h2>{{location[0]}}</h2>
     <table>
       <tr>
-        <th>Online</th><th>ID</th><th>IP</th><th>Response Time</th><th>Timestamp</th><th>Location</th><th>Group</th><th>OS</th><th>Version</th>
+        <th>Online</th><th>ID</th><th>IP</th><th>Response Time</th><th>Timestamp</th><th>Description</th><th>Location</th><th>Group</th><th>LastLogon</th><th>OS</th><th>Version</th>
       </tr>
       {% for item in data %}
-      {% if item[5] == location[0] %}
+      {% if item[6] == location[0] %}
       <tr>
       <td class="{{ 'good' if item[2] == 0 else 'bad' }}">{{item[2]}}</td>
       <td>{{item[0]}}</td>
@@ -25,6 +25,8 @@
       <td>{{item[6]}}</td>
       <td>{{item[7]}}</td>
       <td>{{item[8]}}</td>
+      <td>{{item[9]}}</td>
+      <td>{{item[10]}}</td>
       </tr>
       {% endif %}
       {% endfor %}
