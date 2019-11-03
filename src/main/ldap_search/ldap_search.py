@@ -8,5 +8,5 @@ def ldap_search(server_EnvVariable, user_name_EnvVariable, user_pass_EnvVariable
     conn.bind()
 
     # Search OU
-    conn.search(search_base=search_base_EnvVariable, search_filter='(objectclass=computer)', attributes=['cn', 'distinguishedName', 'dNSHostName', 'lastLogon', 'operatingSystem', 'operatingSystemServicePack', 'operatingSystemVersion', 'description', 'lastLogonTimestamp'])
+    conn.search(search_base=search_base_EnvVariable, search_filter='(objectclass=computer)', attributes=['cn', 'distinguishedName', 'dNSHostName', 'lastLogon', 'operatingSystem', 'operatingSystemServicePack', 'operatingSystemVersion', 'description', 'lastLogonTimestamp', 'telephoneNumber', 'location'])
     return conn.entries

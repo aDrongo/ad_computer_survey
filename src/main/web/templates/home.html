@@ -7,11 +7,24 @@
   </head>
   <body>
     <h1>Ping Survey </h1>
+    <button type="button" onclick="window.location.href ='/main';">Refresh</button>
+    <table>
+    {% for location in locations %}
+      <tr>
+        <td>{{location[0]}}</td>
+      {% for item in data %}
+      {% if item[6] == location[0] %}
+        <td class="{{ 'good' if item[2] == 0 else 'bad' }}">{{item[2]}}</td>
+      {% endif %}
+      {% endfor %}
+      </tr>
+    {% endfor %}
+    </table>
     {% for location in locations %}
     <h2>{{location[0]}}</h2>
     <table>
       <tr>
-        <th>Online</th><th>ID</th><th>IP</th><th>Response Time</th><th>Timestamp</th><th>Description</th><th>Location</th><th>Group</th><th>LastLogon</th><th>OS</th><th>Version</th>
+        <th>Up</th><th>ID</th><th>IP</th><th>Response Time</th><th>Timestamp</th><th>Description</th><th>Location</th><th>Group</th><th>TeamViewer</th><th>LastLogon</th><th>OS</th><th>Version</th>
       </tr>
       {% for item in data %}
       {% if item[6] == location[0] %}
@@ -27,6 +40,7 @@
       <td>{{item[8]}}</td>
       <td>{{item[9]}}</td>
       <td>{{item[10]}}</td>
+      <td>{{item[11]}}</td>
       </tr>
       {% endif %}
       {% endfor %}
