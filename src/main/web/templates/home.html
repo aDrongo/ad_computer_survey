@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
-    <meta charset="utf-8">
-    <title>Ping Survey</title>
+    <meta charset="utf-8" http-equiv="refresh" content="60" >
+    <title>LDAP Device Surveyor</title>
     <link rel="stylesheet" href="{{ url_for('static',    filename='css/template.css') }}">
   </head>
   <body>
-    <h1>Ping Survey </h1>
-    <button type="button" onclick="window.location.href ='/main';">Refresh</button>
+    <div class="topnav">
+      <a href="/">Home</a>
+      <a href="/discovery">Discovery</a>
+    </div>
+    <h1>LDAP Device Surveyor</h1>
     <table>
     {% for location in locations %}
       <tr>
@@ -30,7 +33,7 @@
       {% if item[6] == location[0] %}
       <tr>
       <td class="{{ 'good' if item[2] == 0 else 'bad' }}">{{item[2]}}</td>
-      <td>{{item[0]}}</td>
+      <td><a href="/device/{{item[0]}}">{{item[0]}}</a></td>
       <td>{{item[1]}}</td>
       <td>{{item[3]}}</td>
       <td>{{item[4]}}</td>
