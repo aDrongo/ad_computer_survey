@@ -77,8 +77,14 @@ def compare(filter, data):
 def ping_translate(returncode, ping_result):
     # This is the asynchronous command that it will wait for
     if returncode == 0:
-        ping_result_ip = (re.search(r'\d+\.\d+\.\d+\.\d+', str(ping_result))).group(0)
-        subnet_ip = (re.search(r'\d+\.\d+\.\d+', str(ping_result))).group(0)
+        try:
+            ping_result_ip = (re.search(r'\d+\.\d+\.\d+\.\d+', str(ping_result))).group(0)
+        except:
+            ping_result_ip = 0
+        try:
+            subnet_ip = (re.search(r'\d+\.\d+\.\d+', str(ping_result))).group(0)
+        except:
+            subnet_ip = '0.0.0.0'
         try:
             ping_result_time = str((re.search(r'time=\d+\.\d+', str(ping_result))).group(0)).replace("time=","")
         except:
@@ -92,7 +98,7 @@ def ping_translate(returncode, ping_result):
 
 def update_db(device,session):
     ping = subprocess.run(['ping', f'{device.dnsHostName}', '-c 1', '-w 2', '-4'], capture_output=True)
-    if ping.returncode != 0:
+    if int(ping.returncode) != 0:
         ping = subprocess.run(['ping', f'{device.dnsHostName}', '-c 1', '-w 2', '-6'], capture_output=True)
     ping_result = ping.stdout.decode()
     ping_result = str(ping_result) + str(ping.stderr.decode())

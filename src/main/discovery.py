@@ -78,8 +78,14 @@ def compare(filters, data):
 def ping_translate(returncode, ping_result):
     # This is the asynchronous command that it will wait for
     if returncode == 0:
-        ping_result_ip = (re.search(r'\d+\.\d+\.\d+\.\d+', str(ping_result))).group(0)
-        subnet_ip = (re.search(r'\d+\.\d+\.\d+', str(ping_result))).group(0)
+        try:
+            ping_result_ip = (re.search(r'\d+\.\d+\.\d+\.\d+', str(ping_result))).group(0)
+        except:
+            ping_result_ip = 0
+        try:
+            subnet_ip = (re.search(r'\d+\.\d+\.\d+', str(ping_result))).group(0)
+        except:
+            subnet_ip = '0.0.0.0'
         try:
             ping_result_time = str((re.search(r'time=\d+\.\d+', str(ping_result))).group(0)).replace("time=","")
         except:
@@ -101,6 +107,15 @@ async def update_db(device):
     if stderr:
         ping_result = stderr.decode()
     ping_result_returncode = int(ping_async.returncode)
+    # If not found, try again on IPv6
+    if ping_result_returncode != 0:
+        ping_async = await asyncio.create_subprocess_exec('ping', f'{device.dnsHostName}', '-c 1', '-w 2', '-6', stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
+        stdout, stderr = await ping_async.communicate()
+        if stdout:
+            ping_result = stdout.decode()
+        if stderr:
+            ping_result = stderr.decode()
+        ping_result_returncode = int(ping_async.returncode)
     ping_result_ip, ping_result_time, subnet_ip = ping_translate(ping_result_returncode, ping_result)
     # Now formats and adds to DB
     if (len(device.location.values) == 0) or (device.location == 'unknown'):
