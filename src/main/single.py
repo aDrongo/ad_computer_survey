@@ -146,4 +146,5 @@ def main(filter):
         pass
 
 
+# Argument is device to filter for
 main(sys.argv[1])
