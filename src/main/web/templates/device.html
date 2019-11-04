@@ -6,12 +6,15 @@
     <link rel="stylesheet" href="{{ url_for('static',    filename='css/template.css') }}">
   </head>
   <body>
-    <div class="topnav">
-      <a href="/">Home</a>
+    <div class="nav">
+      <ul>
+        <li><img height="30px" src="https://cdn.nwmsrocks.com/img/3dc41c7.png"/></li>
+        <li><a href="/">LDAP Device Surveyor</a></li>
+        <li><a href="/discovery">Discovery</a></li>
+        <li><a href='/discover_device/{{data.id}}';> Refresh Device </a></li>
+      </ul>
     </div>
-    <h1>LDAP Device Surveyor</h1>
-        <button type="button" onclick="window.location.href ='/discover_device/{{data.id}}';">Refresh</button>
-    <table>
+    <table style="Padding: 2% 2% 2% 2%;">
       <tr>
         <th>Up</th><th>ID</th><th>IP</th><th>Response Time</th><th>Timestamp</th><th>Description</th><th>Location</th><th>Group</th><th>TeamViewer</th><th>LastLogon</th><th>OS</th><th>Version</th>
       </tr>

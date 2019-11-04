@@ -6,11 +6,14 @@
     <link rel="stylesheet" href="{{ url_for('static',    filename='css/template.css') }}">
   </head>
   <body>
-    <div class="topnav">
-      <a href="/">Home</a>
-      <a href="/discovery">Discovery</a>
+    <div class="nav">
+      <ul>
+        <li><img height="30px" src="https://cdn.nwmsrocks.com/img/3dc41c7.png"/></li>
+        <li><a href="/">LDAP Device Surveyor</a></li>
+        <li><a href="/discovery">Discovery</a></li>
+      </ul>
     </div>
-    <h1>LDAP Device Surveyor</h1>
+    <div>
     <table>
     {% for location in locations %}
       <tr>
