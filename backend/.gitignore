@@ -1,0 +1,4 @@
+__pycache__/
+errors.log
+database.sqlite
+database.sqlite-journal
