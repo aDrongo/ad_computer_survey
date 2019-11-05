@@ -109,7 +109,7 @@ def update_db(device,session):
         location = subnet_dict_EnvVariable.get(f"{subnet_ip}", 'unknown')
     else:
         location = device.location
-    group = str((re.search(r'OU=\w+\s\w+', str(device.distinguishedName))).group(0)).replace("OU=","")
+    group = str((re.search(r'OU=\w+\s*\w*', str(device.distinguishedName))).group(0)).replace("OU=","")
     data = [{'id': str(device.cn),
              'ip': str(ping_result_ip),
              'ping_code': int(ping_result_returncode),

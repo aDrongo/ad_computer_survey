@@ -122,7 +122,7 @@ async def update_db(device):
         location = subnet_dict_EnvVariable.get(f"{subnet_ip}", 'unknown')
     else:
         location = device.location
-    group = str((re.search(r'OU=\w+\s\w+', str(device.distinguishedName))).group(0)).replace("OU=","")
+    group = str((re.search(r'OU=\w+\s*\w*', str(device.distinguishedName))).group(0)).replace("OU=","")
     data = [{'id': str(device.cn),
              'ip': str(ping_result_ip),
              'ping_code': int(ping_result_returncode),
@@ -180,6 +180,7 @@ async def main(ldap_result):
         task.cancel()
 
     await asyncio.gather(*tasks, return_exceptions=True)
+    print('done')
 
 # Get computers
 ldap_result = ldap_search(server_EnvVariable, user_name_EnvVariable, user_pass_EnvVariable, search_base_EnvVariable, search_attributes_EnvVariable, "(objectClass=computer)")

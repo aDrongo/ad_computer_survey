@@ -5,10 +5,11 @@ from sqlalchemy.ext.declarative import declarative_base
 from collections import Counter
 from jinja2 import Template
 from apscheduler.schedulers.background import BackgroundScheduler
+import os
 import operator
 import sys
 import time
-
+import math
 
 # For class to create table
 Base = declarative_base()
@@ -36,6 +37,8 @@ def rename(var):
         return 'good'
     else:
         return 'bad'
+
+
 
 
 app = Flask(__name__)
