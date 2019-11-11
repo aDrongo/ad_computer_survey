@@ -1,0 +1,29 @@
+{
+  "server_EnvVariable": "nwmsdc400.internal.northwestmotorsportinc.com",
+  "database_EnvVariable": "database.sqlite",
+  "user_name_EnvVariable": "nwms\\reporting",
+  "user_pass_EnvVariable": "q14tSTYntp3Bd55Q",
+  "search_attributes_EnvVariable": ["cn", "distinguishedName", "dNSHostName", "lastLogon", "operatingSystem", "operatingSystemServicePack", "operatingSystemVersion", "description", "lastLogonTimestamp", "extensionAttribute3", "extensionAttribute2"],
+  "search_base_EnvVariable": "OU=NWMS Computers,DC=internal,DC=northwestmotorsportinc,DC=com",
+  "search_filter_EnvVariable": [ "OU=Retired Computers", "OU=Inactive Computers", "OU=Amazon Workspaces", "OU=Mobile Computers", "OU=Apple Computers" ],
+  "subnet_dict_EnvVariable": {
+      "10.4.3": "Puyallup 400",
+      "10.2.3": "Puyallup 400",
+      "10.4.4": "Puyallup 1502",
+      "10.4.5": "Puyallup 819",
+      "10.4.6": "Lynnwood 17510",
+      "10.4.7": "Puyallup 300",
+      "10.4.8": "Puyallup 1830",
+      "10.4.9": "Everett 12227",
+      "10.4.16": "Pasco 816",
+      "10.4.17": "Pasco 816",
+      "10.4.20": "Puyallup 500",
+      "10.4.21": "Puyallup 500",
+      "10.4.24": "Puyallup Joydrive",
+      "10.4.28": "Lynnwood 17319",
+      "10.4.32": "Marysville 3520",
+      "10.4.36": "Spokane 12606",
+      "172.16.0": "AWS",
+      "0.0.0.0": "unknown"
+  }
+}
