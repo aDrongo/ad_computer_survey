@@ -6,14 +6,17 @@
     <link rel="stylesheet" href="{{ url_for('static',    filename='css/template.css') }}">
   </head>
   <body>
-    <div class="nav">
+    <nav>
       <ul>
         <li><img height="30px" src="https://cdn.nwmsrocks.com/img/3dc41c7.png"/></li>
-        <li><a href="/">LDAP Device Surveyor</a></li>
+        <li><a href="/">Overview</a></li>
         <li><a href="/iframe">Simple View</a></li>
         <li><a href="/discovery">Discovery</a></li>
       </ul>
-    </div>
+      <ul class='navicon'>
+        <li>LDAP Device Surveyor</li>
+      </ul>
+    </nav>
       <div style="width: 100%;">
         <table style="width: 90%;">
         {% for location in locations %}
@@ -22,7 +25,7 @@
             {% for item in data %}
               {% if item[6] == location[0] %}
                {% if item[2] == 1 %}
-              <td class="bad"><a href="/device/{{item[0]}}">{{item[2]}}</a></td>
+              <td class="down"><a href="/device/{{item[0]}}">{{item[2]}}</a></td>
                {% endif %}
               {% endif %}
             {% endfor %}
@@ -36,7 +39,7 @@
   	        {% for item in data %}
              {% if item[6] == location[0] %}
               {% if item[2] == 0 %}
-             <td class="good"><a href="/device/{{item[0]}}">{{item[2]}}</a></td>
+             <td class="up"><a href="/device/{{item[0]}}">{{item[2]}}</a></td>
               {% endif %}
              {% endif %}
             {% endfor %}
@@ -49,23 +52,24 @@
     <h2 id="{{location[0]}}">{{location[0]}}</h2>
     <table>
       <tr>
-        <th>Up</th><th>ID</th><th>IP</th><th>Response Time</th><th>Timestamp</th><th>Description</th><th>Location</th><th>Group</th><th>TeamViewer</th><th>LastLogon</th><th>OS</th><th>Version</th>
+        <th>Up</th><th>ID</th><th>IP</th><th>TeamViewer</th><th>Description</th><th>Group</th><th>Location</th><th>Response</th><th>Timestamp</th><th>LastUp</th><th>LastLogon</th><th>OS</th><th>Version</th>
       </tr>
       {% for item in data %}
       {% if item[6] == location[0] %}
       <tr>
-      <td class="{{ 'good' if item[2] == 0}}{{ 'bad' if item[2] == 1}}{{ 'dns' if item[2] == 2}}"><a href="/discover_device/{{item[0]}}">{{item[2]}}</a></td>
+      <td class="{{ 'up' if item[2] == 0}}{{ 'down' if item[2] == 1}}{{ 'dns' if item[2] == 2}}"><a href="/discover_device/{{item[0]}}">{{item[2]}}</a></td>
       <td><a href="https://www.myassettag.com/assettiger/assets?search={{item[0]}}">{{item[0]}}</a></td>
       <td>{{item[1]}}</td>
+      <td>{{item[8]}}</td>
+      <td>{{item[5]}}</td>
+      <td>{{item[7]}}</td>
+      <td>{{item[6]}}</td>
       <td>{{item[3]}}</td>
       <td>{{item[4]}}</td>
-      <td>{{item[5]}}</td>
-      <td>{{item[6]}}</td>
-      <td>{{item[7]}}</td>
-      <td>{{item[8]}}</td>
       <td>{{item[9]}}</td>
       <td>{{item[10]}}</td>
       <td>{{item[11]}}</td>
+      <td>{{item[12]}}</td>
       </tr>
       {% endif %}
       {% endfor %}

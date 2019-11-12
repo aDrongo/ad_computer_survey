@@ -11,7 +11,8 @@ from sqlalchemy.ext.declarative import declarative_base
 from ldap_search.ldap_search import ldap_search
 
 
-current_Time = time.strftime("%Y%m%d-%H%M%S")
+current_Time = time.strftime("%Y-%m-%d %H:%M")
+current_DateTime = time.monotonic()
 logging.basicConfig(filename=f'errors.log', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Load Config
@@ -51,6 +52,7 @@ class Table(Base):
     location = db.Column(db.String())
     group = db.Column(db.String())
     tv = db.Column(db.String())
+    lastup = db.Column(db.String())
     lastlogon = db.Column(db.String())
     os = db.Column(db.String())
     version = db.Column(db.String())
@@ -77,8 +79,8 @@ def compare(filters, data):
     return True
 
 
+# Converts ping results
 def ping_translate(returncode, ping_result):
-    # This is the asynchronous command that it will wait for
     if returncode == 0:
         try:
             ping_result_ip = (re.search(r'\d+\.\d+\.\d+\.\d+', str(ping_result))).group(0)
@@ -137,6 +139,8 @@ async def update_db(device):
              'lastlogon': str(device.lastLogonTimestamp)[:16],
              'os': str(device.operatingSystem),
              'version': str(device.operatingSystemVersion)}]
+    if ping_result_returncode == 0:
+        data[0]['lastup'] = str(current_Time)
     existing_result = session.query(Table).filter_by(id=f'{device.cn}').count()
     if existing_result > 0:
         session.bulk_update_mappings(Table, data)
@@ -182,7 +186,6 @@ async def main(ldap_result):
         task.cancel()
 
     await asyncio.gather(*tasks, return_exceptions=True)
-    print('done')
 
 # Get computers
 ldap_result = ldap_search(server_EnvVariable, user_name_EnvVariable, user_pass_EnvVariable, search_base_EnvVariable, search_attributes_EnvVariable, "(objectClass=computer)")
@@ -193,6 +196,9 @@ engine, connection, session, metadata = connect_db()
 # Add computers to DB
 asyncio.run(main(ldap_result))
 
-end_Time = time.strftime("%Y%m%d-%H%M%S")
-logging.debug('start time' + str(current_Time))
-logging.debug('finish time' + str(end_Time))
+end_Time = time.strftime("%Y-%m-%d %H:%M")
+end_DateTime = time.monotonic()
+dif_Time = int(end_DateTime - current_DateTime)
+print(f'started at {current_Time}')
+print(f'done at {end_Time}')
+print(f'completed in {dif_Time} seconds')

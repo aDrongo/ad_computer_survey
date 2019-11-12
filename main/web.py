@@ -30,6 +30,7 @@ class Table(Base):
     location = db.Column(db.String())
     group = db.Column(db.String())
     tv = db.Column(db.String())
+    lastup = db.Column(db.String())
     lastlogon = db.Column(db.String())
     os = db.Column(db.String())
     version = db.Column(db.String())
@@ -51,9 +52,6 @@ def home():
     try:
         engine = db.create_engine(f'sqlite:///{db_env}', connect_args={'check_same_thread': False})
         connection = engine.connect()
-        metadata = db.MetaData(bind=connection, reflect=True)
-        Session = sessionmaker(bind=engine)
-        session = Session()
         print('Connected to DB')
     except Exception as e:
         print(e)
@@ -64,7 +62,7 @@ def home():
     locations = connection.execute("SELECT DISTINCT location FROM 'table';")
     locations = locations.fetchall()
     locations.sort(key=operator.itemgetter(0))
-    close = connection.close()
+    connection.close()
     return render_template("home.html", data=data, locations=locations)
 
 
@@ -74,9 +72,6 @@ def iframe():
     try:
         engine = db.create_engine(f'sqlite:///{db_env}', connect_args={'check_same_thread': False})
         connection = engine.connect()
-        metadata = db.MetaData(bind=connection, reflect=True)
-        Session = sessionmaker(bind=engine)
-        session = Session()
         print('Connected to DB')
     except Exception as e:
         print(e)
@@ -87,7 +82,7 @@ def iframe():
     locations = connection.execute("SELECT DISTINCT location FROM 'table';")
     locations = locations.fetchall()
     locations.sort(key=operator.itemgetter(0))
-    close = connection.close()
+    connection.close()
     return render_template("iframe.html", data=data, locations=locations)
 
 
@@ -97,16 +92,13 @@ def device(device_id):
     try:
         engine = db.create_engine(f'sqlite:///{db_env}', connect_args={'check_same_thread': False})
         connection = engine.connect()
-        metadata = db.MetaData(bind=connection, reflect=True)
         Session = sessionmaker(bind=engine)
         session = Session()
         print('Connected to DB')
     except Exception as e:
         print(e)
         sys.exit(e)
-    # data = connection.execute(f"SELECT * FROM 'table' WHERE 'id' = '{device_id}';")
     data = session.query(Table).filter_by(id=f'{device_id}').first()
-    # data = data.fetchall()
     connection.close()
     return render_template("device.html", data=data)
 
@@ -143,13 +135,16 @@ def discovery():
 @app.route("/cron_discovery")
 def cron_discovery():
     import subprocess
-    proc = subprocess.Popen(['python3.7', 'discovery.py'])
+    subprocess.Popen(['python3.7', 'discovery.py'])
 
 
 sched = BackgroundScheduler(daemon=True)
 sched.add_job(cron_discovery,'interval',minutes=10)
 sched.start()
 
+# if you don't want to use https
+# if __name__ == "__main__":
+#    app.run(host="0.0.0.0", debug=True)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", ssl_context=('../server.x509', '../server.key'))

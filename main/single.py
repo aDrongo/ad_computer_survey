@@ -10,7 +10,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from ldap_search.ldap_search import ldap_search
 
-current_Time = time.strftime("%Y%m%d-%H%M%S")
+current_Time = time.strftime("%Y-%m-%d %H:%M")
 logging.basicConfig(filename=f'errors.log', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Load Config
@@ -50,6 +50,7 @@ class Table(Base):
     location = db.Column(db.String())
     group = db.Column(db.String())
     tv = db.Column(db.String())
+    lastup = db.Column(db.String())
     lastlogon = db.Column(db.String())
     os = db.Column(db.String())
     version = db.Column(db.String())
@@ -124,6 +125,8 @@ def update_db(device,session):
              'lastlogon': str(device.lastLogonTimestamp)[:16],
              'os': str(device.operatingSystem),
              'version': str(device.operatingSystemVersion)}]
+    if ping_result_returncode == 0:
+        data[0]['lastup'] = str(current_Time)
     existing_result = session.query(Table).filter_by(id=f'{device.cn}').count()
     if existing_result > 0:
         session.bulk_update_mappings(Table, data)

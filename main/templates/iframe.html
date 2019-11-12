@@ -3,12 +3,10 @@
   <head>
     <title>LDAP Device Surveyor</title>
     <style>
-    td, th { border:0px solid black; border-collapse:collapse; white-space:pre; height: 17px; }
+    td, th { border:0px solid black; border-collapse:collapse; white-space:pre; height: 20px; border-radius: 3px; }
     th { color:white; background-color:black; }
-    table, tr, td, th { padding: 2px; margin: 0px ;white-space:pre; word-wrap: break-word; }
+    table, tr, td, th { white-space:pre; word-wrap: break-word; }
     table { width:100%;}
-    div { word-wrap: break-word; overflow: hidden; overflow-y: hidden;}
-    div:hover { overflow: auto; overflow-y: auto; padding-right: 1px;}
     html {
         height: 100%;
         box-sizing: border-box;
@@ -21,11 +19,11 @@
         position: relative;
         font-size: 10px;
       }
-    .good {
+    .up {
       background-color: rgb(92, 184, 92);
       color: rgb(92, 184, 92);
     }
-    .bad {
+    .down {
       background-color: rgb(217, 83, 79);
       color: rgb(217, 83, 79);
     }
@@ -41,32 +39,39 @@
         color: inherit;
         text-decoration: underline;
       }
+    .tablelink {
+      height: 95%;
+      width: 95%;
+    }
+    .librenms { word-wrap: break-word; overflow: hidden; overflow-y: hidden; width: 100%;}
+    .librenms:hover { overflow: auto; overflow-y: auto; padding-right: 1px;}
+    .locations {width:80px;}
     </style>
   </head>
-  <body class="librenms">
-      <div style="width: 100%;">
+  <body>
+      <div class="librenms" >
         <table style="width: 100%;">
         {% for location in locations %}
           <tr>
-            <td><a href="#{{location[0]}}">{{location[0]}}</a></td>
+            <td class='locations'><a href="/#{{location[0]}}">{{location[0]}}</a></td>
           {% for item in data %}
             {% if item[6] == location[0] %}
              {% if item[2] == 1 %}
-            <td class="bad"><a href="/device/{{item[0]}}">{{item[2]}}</a></td>
+            <td class="down"><a href="/device/{{item[0]}}"><div class="tablelink">{{item[2]}}</div></a></td>
              {% endif %}
             {% endif %}
           {% endfor %}
 	  {% for item in data %}
 	   {% if item[6] == location[0] %}
 	     {% if item[2] == 2 %}
-            <td class="dns"><a href="/device/{{item[0]}}">{{item[2]}}</a></td>
+            <td class="dns"><a href="/device/{{item[0]}}"><div class="tablelink">{{item[2]}}</div></a></td>
              {% endif %}
 	    {% endif %}
 	   {% endfor %}
 	  {% for item in data %}
             {% if item[6] == location[0] %}
             {% if item[2] == 0 %}
-           <td class="good"><a href="/device/{{item[0]}}">{{item[2]}}</a></td>
+           <td class="up"><a href="/device/{{item[0]}}"><div class="tablelink">{{item[2]}}</div></a></td>
             {% endif %}
             {% endif %}
           {% endfor %}
