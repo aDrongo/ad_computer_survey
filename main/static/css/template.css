@@ -18,6 +18,8 @@ body {
     position: relative;
     overflow: auto;
     font-size:10pt;
+    padding: 60px 0 0 0;
+    transition: all 0.4s ease-in;
   }
 *, ::after, ::before {
     box-sizing: border-box;
@@ -31,18 +33,13 @@ a:hover{
     color: inherit;
     text-decoration: underline;
   }
+p {
+  padding-left: 10px;
+  }
 .navicon {
   float: right;
   line-height: 35px;
 }
-.header {
-    width: 33%;
-    height: 100%;
-    transition: all .3s ease-in-out;
-    color: #ffffff;
-    text-align: center;
-    overflow: auto;
-  }
 .footer {
     background-color: #565557;
     width: 100%;
@@ -65,29 +62,28 @@ a:hover{
 .dns {
   background-color: orange;
 }
-.container {
-  padding-top: 2%;
-  width: 100%;
-  text-align: center;
-}
-.col-3 {
-  width: 33%;
-  float: left;
-  position:relative;
-  min-height:1px;
-  padding-right:1%;
-  padding-left:1%;
-  padding-top: 2%;
-}
 nav {
-  font-size: 16px;
+  font-size: 18px;
   background-color: #565557;
   width: 100%;
   overflow: hidden;
   box-sizing: border-box;
   padding-left:1%;
   display: inline-block;
-  transition: all 0.2s;
   list-style-type: none;
   vertical-align: bottom;
+  top: 0;
+  position: fixed;
+}
+@media screen and (max-width: 600px){
+  .navicon {
+    display: none;
+  }
+  nav {
+    font-size: 14px;
+    padding-left: 0;
+  }
+  ul, li {
+    padding: 0 2px 0 0;
+  }
 }

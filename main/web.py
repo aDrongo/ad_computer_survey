@@ -6,6 +6,7 @@ from collections import Counter
 from jinja2 import Template
 from apscheduler.schedulers.background import BackgroundScheduler
 import os
+import json
 import operator
 import sys
 import time
@@ -13,6 +14,77 @@ import math
 import logging
 
 logging.basicConfig(filename=f'errors.log', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Load Config
+try:
+    with open('config.json') as f:
+        config = json.loads(f.read())
+    try:
+        database_EnvVariable = str(config['database_EnvVariable'])
+    except Exception as e:
+        logging.debug(e)
+        sys.exit('Config file incorrect')
+except Exception as e:
+    logging.debug(e)
+    sys.exit('Config file not loaded')
+
+header = """
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta charset="utf-8" http-equiv="refresh" content="60" >
+   <title>LDAP Device Surveyor</title>
+    <style>
+    ul { margin: 0; padding: 5px 5px 0 5px; float: left; }
+    li { display: inline-block; padding: 2px 10px 2px 2px; color: #D9D8D6; vertical-align: middle; }
+    html { 
+        height: 100%;
+        box-sizing: border-box;
+    }
+    body {
+        background-color: #222222;
+        color: white;
+        font-family: monospace;
+        min-height: 95%;
+        position: relative;
+        font-size: 10px;;
+        margin: 0;
+        padding: 50px 0 0 0;
+      }
+    a, a:link, a:visited, a:active {
+        color: inherit;
+        text-decoration: none;
+      }
+    a:hover{
+        color: inherit;
+        text-decoration: underline;
+      }
+    nav {
+        position: fixed;
+        margin: 0;
+        font-size: 16px;
+        background-color: #565557;
+        width: 100%;
+        overflow: hidden;
+        box-sizing: border-box;
+        display: inline-block;
+        transition: all 0.2s;
+        list-style-type: none;
+        padding-left: 1%;
+        top: 0;
+    }
+    </style>
+ </head>
+  <body>
+    <nav>
+      <ul>
+        <li><img height="30px" src="https://cdn.nwmsrocks.com/img/3dc41c7.png"/></li>
+        <li><a href="/">Overview</a></li>
+      </ul>
+    </nav>
+    <div>
+"""
+
 
 # For class to create table
 Base = declarative_base()
@@ -48,9 +120,8 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-    db_env = 'database.sqlite'
     try:
-        engine = db.create_engine(f'sqlite:///{db_env}', connect_args={'check_same_thread': False})
+        engine = db.create_engine(f'sqlite:///{database_EnvVariable}', connect_args={'check_same_thread': False})
         connection = engine.connect()
         print('Connected to DB')
     except Exception as e:
@@ -68,9 +139,8 @@ def home():
 
 @app.route("/iframe")
 def iframe():
-    db_env = 'database.sqlite'
     try:
-        engine = db.create_engine(f'sqlite:///{db_env}', connect_args={'check_same_thread': False})
+        engine = db.create_engine(f'sqlite:///{database_EnvVariable}', connect_args={'check_same_thread': False})
         connection = engine.connect()
         print('Connected to DB')
     except Exception as e:
@@ -88,9 +158,8 @@ def iframe():
 
 @app.route("/device/<device_id>")
 def device(device_id):
-    db_env = 'database.sqlite'
     try:
-        engine = db.create_engine(f'sqlite:///{db_env}', connect_args={'check_same_thread': False})
+        engine = db.create_engine(f'sqlite:///{database_EnvVariable}', connect_args={'check_same_thread': False})
         connection = engine.connect()
         Session = sessionmaker(bind=engine)
         session = Session()
@@ -115,13 +184,6 @@ def discover_device(device_id):
 def discovery():
     import subprocess
     proc = subprocess.Popen(['python3.7', 'discovery.py'], stdout=subprocess.PIPE, universal_newlines=True)
-    header = """
-<html>
-<body>
-    <div class="topnav">
-        <a href="/">Home</a>
-    </div>
-"""
     def inner():
         i = 0
         for stdout in iter(proc.stdout.readline, ""):
@@ -132,17 +194,47 @@ def discovery():
     return Response(inner(), mimetype='text/html')
 
 
+@app.route("/prune")
+def prune():
+    import subprocess
+    proc = subprocess.Popen(['python3.7', 'prune.py'], stdout=subprocess.PIPE, universal_newlines=True)
+    def inner():
+        i = 0
+        for stdout in iter(proc.stdout.readline, ""):
+            if i == 0:
+                i = i + 1
+                yield header
+            yield str(stdout) + "<br>\n"
+    return Response(inner(), mimetype='text/html')
+
+
+@app.route("/logs")
+def log():
+    with open('errors.log') as file:
+        data = file.read()
+    data = data.split('\n')
+    return render_template("logs.html", data=data)
+
+
+
 @app.route("/cron_discovery")
 def cron_discovery():
     import subprocess
     subprocess.Popen(['python3.7', 'discovery.py'])
 
 
+@app.route("/cron_prune")
+def cron_prune():
+    import subprocess
+    subprocess.Popen(['python3.7', 'prune.py'])
+
+
 sched = BackgroundScheduler(daemon=True)
 sched.add_job(cron_discovery,'interval',minutes=10)
+sched.add_job(cron_prune,'interval',minutes=300)
 sched.start()
 
-# if you don't want to use https
+# if you don't want to use https or you want debugging
 # if __name__ == "__main__":
 #    app.run(host="0.0.0.0", debug=True)
 

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
-    <meta charset="utf-8" http-equiv="refresh" content="60" >
+    <meta charset="utf-8">
     <title>LDAP Device Surveyor</title>
     <link rel="stylesheet" href="{{ url_for('static',    filename='css/template.css') }}">
   </head>
@@ -13,11 +13,14 @@
         <li><a href="/iframe">Simple View</a></li>
         <li><a href='/discover_device/{{data.id}}';> Refresh Device </a></li>
         <li><a href="/discovery">Discovery</a></li>
+        <li><a href="/prune">Prune</a></li>
+        <li><a href="/logs">Logs</a></li>
       </ul>
       <ul class='navicon'>
         <li>LDAP Device Surveyor</li>
       </ul>
     </nav>
+    <article>
     <table style="Padding: 2% 2% 2% 2%;">
       <tr>
         <th>Up</th><th>ID</th><th>IP</th><th>TeamViewer</th><th>Description</th><th>Group</th><th>Location</th><th>Response Time</th><th>Timestamp</th><th>LastUp</th><th>LastLogon</th><th>OS</th><th>Version</th>
@@ -38,5 +41,6 @@
       <td>{{data.version}}</td>
       </tr>
     </table>
+    </article>
   </body>
 </html>
