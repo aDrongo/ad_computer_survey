@@ -16,7 +16,7 @@ TODO: Rewrite program to a more modular format with classes that doesn't rely up
 TODO: Add modularity to allow easy adding/removing of attributes  
 
 ## Install Python3.7
-git clone this repo
+git clone this repo  
 sudo apt-get install python3.7 python3-pip   
 python3.7 -m pip install -r requirements.txt  
 useradd --user-group flask  
@@ -24,6 +24,7 @@ sudo chown flask:flask .* -R
 sudo chmod 775 .* -R  
 
 ### Install SSL Certs as server.x509 & server.key
+You can change web.py to not use SSL
 
 ## Initialize database
 python3.7 discovery.py
@@ -45,7 +46,8 @@ WorkingDirectory=/opt/ldap_device_surveyor/main
 Restart=always  
 
 [Install]  
-WantedBy=multi-user.target```
+WantedBy=multi-user.target
+```
 
 sudo systemctl daemon-reload --force  
 sudo systemctl enable lds.service  
