@@ -1,14 +1,14 @@
 # LDAP Device Surveyor
 The purpose of this program is to ping an OU of computers.
-..* It can show LastLogon timestamp to identify inactive computers
-..* You can filter the devices pulled from LDAP
-..* It can organize by location
-..* It can display attributes pulled from LDAP
-..* Discovery is where it pulls from LDAP and pings device pulled
-..* By default it runs discovery every 10 minutes
-..* Uses a SQLLite database to store data
-..* Records last pinged time
-..* It cross-checks it's database with LDAP every 12hrs
+* It can show LastLogon timestamp to identify inactive computers
+* You can filter the devices pulled from LDAP
+* It can organize by location
+* It can display attributes pulled from LDAP
+* Discovery is where it pulls from LDAP and pings device pulled
+* By default it runs discovery every 10 minutes
+* Uses a SQLLite database to store data
+* Records last pinged time
+* It cross-checks it's database with LDAP every 12hrs
 
 Work in progress.
 TODO: Rewrite program to a more modular format with classes that doesn't rely upon calling individual python scripts.
