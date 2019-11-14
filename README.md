@@ -1,25 +1,23 @@
 # LDAP Device Surveyor
 The purpose of this program is to ping an OU of computers.
-* Discovery is where it pulls from LDAP and pings device pulled
+* Discovery is where it pulls from LDAP and pings devices pulled
+* Uses async module for pinging, enables concurrency for faster processing.
 * By default it runs discovery every 10 minutes
 * Uses a SQLLite database to store data
-* Records last pinged time
+* Records last successful pinged time
 * It cross-checks it's database with LDAP every 12hrs
 * It can show LastLogon timestamp to identify inactive computers
 * You can filter the devices pulled from LDAP
-* It can organize by location
 * It can display attributes pulled from LDAP
-
+* It can organize by location
 
 Work in progress.  
 TODO: Rewrite program to a more modular format with classes that doesn't rely upon calling individual python scripts.  
 TODO: Add modularity to allow easy adding/removing of attributes  
 
-
 ## Install Python3.7
-git clone git@github.com:NorthwestMotorsport/ldap_device_surveyor.git  
-sudo apt-get install python3.7 python3-pip  
-cd ldap_device_surveyor  
+git clone this repo
+sudo apt-get install python3.7 python3-pip   
 python3.7 -m pip install -r requirements.txt  
 useradd --user-group flask  
 sudo chown flask:flask .* -R  
