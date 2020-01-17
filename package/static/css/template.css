@@ -54,13 +54,20 @@ p {
     word-spacing: 1px;
   }
 .up {
-  background-color: green;
+  background-color: rgb(50, 150, 50);
+  color: rgb(50, 150, 50);
 }
 .down {
-  background-color: red;
+  background-color: rgb(200, 50, 50);
+  color: rgb(200, 50, 50);
 }
 .dns {
-  background-color: orange;
+  background-color: rgb(200, 175, 25);
+  color: rgb(200, 175, 25);
+}
+.tablelink {
+  height: 95%;
+  width: 95%;
 }
 nav {
   font-size: 18px;

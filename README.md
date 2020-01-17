@@ -10,12 +10,11 @@ The purpose of this program is to ping an OU of computers.
 * You can filter the devices pulled from LDAP
 * It can display attributes pulled from LDAP
 * It can organize by location
+* LDAP API to modify objects
 
 Work in progress.  
-TODO: Rewrite program to a more modular format with classes that doesn't rely upon calling individual python scripts.  
-TODO: Add modularity to allow easy adding/removing of attributes  
 
-## Install Python3.7
+## Install
 git clone this repo  
 sudo apt-get install python3.7 python3-pip   
 python3.7 -m pip install -r requirements.txt  
@@ -23,14 +22,14 @@ useradd --user-group flask
 sudo chown flask:flask .* -R  
 sudo chmod 775 .* -R  
 
-### Install SSL Certs as server.x509 & server.key
-You can change web.py to not use SSL
+## Install SSL Certs as server.x509 & server.key
+You can change web.py to not use SSL  
 
 ## Initialize database
-python3.7 discovery.py
+python3.7 discovery.py  
 
 ## Create Service
-sudo vim /etc/systemd/system/lds.service
+sudo vim /etc/systemd/system/lds.service  
 
 ```[Unit]  
 Description=LDAP Device Surveyor  
@@ -41,8 +40,8 @@ After=syslog.target
 [Service]  
 User=flask 
 Group=flask  
-ExecStart=/usr/bin/python3.7 /opt/ldap_device_surveyor/main/web.py  
-WorkingDirectory=/opt/ldap_device_surveyor/main
+ExecStart=/usr/bin/python3.7 /opt/ldap_device_surveyor/package/web.py  
+WorkingDirectory=/opt/ldap_device_surveyor/package
 Restart=always  
 
 [Install]  
@@ -52,3 +51,21 @@ WantedBy=multi-user.target
 sudo systemctl daemon-reload --force  
 sudo systemctl enable lds.service  
 sudo systemctl start lds.service  
+
+
+## API
+Example  
+```
+/api/v1/modify/computer=NWMSVMMJ1699&description=ben.gardner.test&extensionAttribute2=Puyallup%20400&extensionAttribute3=1334566439&extensionAttribute5=0
+```
+
+Fields are  
+```
+computer *required  
+description  
+extensionAttribute2  
+extensionAttribute3  
+extensionAttribute5  
+```
+
+It will fail if wrong fields are submited or no computer included, returns JSON with results.  

@@ -3,7 +3,7 @@
   <head>
     <title>LDAP Device Surveyor</title>
     <style>
-    td, th { border:0px solid black; border-collapse:collapse; white-space:pre; height: 20px; border-radius: 3px; }
+    td, th { border:0px solid black; border-collapse:collapse; white-space:pre; height: 16px; border-radius: 3px; }
     th { color:white; background-color:black; }
     table, tr, td, th { white-space:pre; word-wrap: break-word; }
     table { width:100%;}
@@ -52,11 +52,21 @@
       <div class="librenms" >
         <table style="width: 100%;">
         {% for location in locations %}
+	{% set count = [0] %}
           <tr>
             <td class='locations'><a href="/#{{location[0]}}">{{location[0]}}</a></td>
           {% for item in data %}
             {% if item[6] == location[0] %}
              {% if item[2] == 1 %}
+                  {% if count.append(count.pop() + 1) %}{% endif %}
+                  {% if count[0] == 50 %}
+                    <tr>
+                    <td></td>
+                  {% endif %}
+                  {% if count[0] == 99 %}
+                    <tr>
+                    <td></td>
+                  {% endif %}
             <td class="down"><a href="/device/{{item[0]}}"><div class="tablelink">{{item[2]}}</div></a></td>
              {% endif %}
             {% endif %}
@@ -64,6 +74,15 @@
 	  {% for item in data %}
 	   {% if item[6] == location[0] %}
 	     {% if item[2] == 2 %}
+                  {% if count.append(count.pop() + 1) %}{% endif %}
+                  {% if count[0] == 50 %}
+                    <tr>
+                    <td></td>
+                  {% endif %}
+                  {% if count[0] == 99 %}
+                    <tr>
+                    <td></td>
+                  {% endif %}
             <td class="dns"><a href="/device/{{item[0]}}"><div class="tablelink">{{item[2]}}</div></a></td>
              {% endif %}
 	    {% endif %}
@@ -71,10 +90,25 @@
 	  {% for item in data %}
             {% if item[6] == location[0] %}
             {% if item[2] == 0 %}
+                  {% if count.append(count.pop() + 1) %}{% endif %}
+                  {% if count[0] == 50 %}
+                    <tr>
+                    <td></td>
+                  {% endif %}
+                  {% if count[0] == 99 %}
+                    <tr>
+                    <td></td>
+                  {% endif %}
            <td class="up"><a href="/device/{{item[0]}}"><div class="tablelink">{{item[2]}}</div></a></td>
             {% endif %}
             {% endif %}
           {% endfor %}
+          {% if count[0] == 50 %}
+            </tr>
+          {% endif %}
+          {% if count[0] == 99 %}
+            </tr>
+          {% endif %}
           </tr>
         {% endfor %}
         </table>

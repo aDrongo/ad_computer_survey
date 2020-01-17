@@ -1,0 +1,13 @@
+{
+  "server_Env": "dc.internal.contoso.com",
+  "database_Env": "database.sqlite",
+  "workers_Env": "8",
+  "user_name_Env": "contoso\\user",
+  "user_pass_Env": "paSSw0rd",
+  "search_attributes_Env": ["cn", "distinguishedName", "dNSHostName", "lastLogon", "operatingSystem", "operatingSystemServicePack", "operatingSystemVersion", "description", "lastLogonTimestamp", "telephoneNumber", "location"],
+  "search_base_Env": "OU=Computers,DC=internal,DC=contoso,DC=com",
+  "search_filter_Env": [ "OU=Retired Computers", "OU=Inactive Computers" ],
+  "subnet_dict_Env": {
+      "10.0.0": "Contoso",
+  }
+}

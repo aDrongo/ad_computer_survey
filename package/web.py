@@ -1,7 +1,6 @@
 from flask import Flask, render_template, Response, redirect, url_for
 import sqlalchemy as db
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
 from collections import Counter
 from jinja2 import Template
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -12,27 +11,48 @@ import sys
 import time
 import math
 import logging
+import logging.handlers
+import modules.database as database
+import modules.ldap as ldap
+import modules.pingdevice as pingdevice
+from modules.assorted import getLocation, getGroup, compare, loadConfig, convertRequest
+from modules.database import Table, Base
 
-logging.basicConfig(filename=f'errors.log', level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s', handlers=[logging.handlers.RotatingFileHandler("errors.log", maxBytes=1000000, backupCount=3)])
+
+logging.info('Running web.py')
 
 # Load Config
+try:
+    (server_Env,
+    database_Env,
+    user_name_Env,
+    user_pass_Env,
+    workers_Env,
+    search_base_Env,
+    search_attributes_Env,
+    search_filter_Env,
+    subnet_dict_Env) = loadConfig()
+except Exception as e:
+    logging.error(e)
+    sys.exit(1)
+
 try:
     with open('config.json') as f:
         config = json.loads(f.read())
     try:
-        database_EnvVariable = str(config['database_EnvVariable'])
+        user_name_Env2 = str(config['user_name_Env2'])
+        user_pass_Env2 = str(config['user_pass_Env2'])
     except Exception as e:
-        logging.debug(e)
-        sys.exit('Config file incorrect')
+        raise 'Config file incorrect'
 except Exception as e:
-    logging.debug(e)
-    sys.exit('Config file not loaded')
+    raise 'Config file not loaded'
 
 header = """
 <!DOCTYPE html>
 <html>
  <head>
-  <meta charset="utf-8" http-equiv="refresh" content="60" >
+  <meta charset="utf-8" http-equiv="refresh" content="300" >
    <title>LDAP Device Surveyor</title>
     <style>
     ul { margin: 0; padding: 5px 5px 0 5px; float: left; }
@@ -86,28 +106,6 @@ header = """
 """
 
 
-# For class to create table
-Base = declarative_base()
-
-
-# Defines table for SqlAlchemy
-class Table(Base):
-    __tablename__ = 'table'
-    id = db.Column(db.String(), primary_key=True)
-    ip = db.Column(db.String())
-    ping_code = db.Column(db.Integer())
-    ping_time = db.Column(db.Float())
-    time_stamp = db.Column(db.String())
-    description = db.Column(db.String())
-    location = db.Column(db.String())
-    group = db.Column(db.String())
-    tv = db.Column(db.String())
-    lastup = db.Column(db.String())
-    lastlogon = db.Column(db.String())
-    os = db.Column(db.String())
-    version = db.Column(db.String())
-
-
 def rename(var):
     if var == 0:
         return 'good'
@@ -121,7 +119,7 @@ app = Flask(__name__)
 @app.route("/")
 def home():
     try:
-        engine = db.create_engine(f'sqlite:///{database_EnvVariable}', connect_args={'check_same_thread': False})
+        engine = db.create_engine(f'sqlite:///{database_Env}', connect_args={'check_same_thread': False})
         connection = engine.connect()
         print('Connected to DB')
     except Exception as e:
@@ -140,7 +138,7 @@ def home():
 @app.route("/iframe")
 def iframe():
     try:
-        engine = db.create_engine(f'sqlite:///{database_EnvVariable}', connect_args={'check_same_thread': False})
+        engine = db.create_engine(f'sqlite:///{database_Env}', connect_args={'check_same_thread': False})
         connection = engine.connect()
         print('Connected to DB')
     except Exception as e:
@@ -159,7 +157,7 @@ def iframe():
 @app.route("/device/<device_id>")
 def device(device_id):
     try:
-        engine = db.create_engine(f'sqlite:///{database_EnvVariable}', connect_args={'check_same_thread': False})
+        engine = db.create_engine(f'sqlite:///{database_Env}', connect_args={'check_same_thread': False})
         connection = engine.connect()
         Session = sessionmaker(bind=engine)
         session = Session()
@@ -216,26 +214,101 @@ def log():
     return render_template("logs.html", data=data)
 
 
+@app.route('/api/v1/modify/<getData>', methods=['GET'])
+def api_modify(getData):
+    #Allowed fields
+    Allowed = ['computer','description','extensionAttribute2','extensionAttribute3','extensionAttribute5']
+    #Split data
+    requestData = convertRequest(getData)
+    #Get List of Keys
+    requestList = list(requestData)
+    #Check if computer is specified
+    if Allowed[0] not in requestData:
+        result = {"result": 1, "description": "failure", "message": 'Error, no computer defined'}
+    #Check if all attributes are in Allowed list
+    elif len(set(requestList).difference(Allowed)) > 0:
+        result = {"result": 1, "description": "failure", "message": str(set(requestList).difference(Allowed))}
+    #Process request
+    else:
+        result = []
+        search_filter = requestData['computer']
+        search_filter = f'(cn={search_filter})'
+        requestData.pop('computer')
+        for key in requestData:
+            ldap_attribute = key
+            data = requestData[key]
+            resultData = ldap.update(server_Env, user_name_Env, user_pass_Env, search_base_Env, search_attributes_Env ,search_filter, ldap_attribute, data)
+            resultData['ldap_attribute'] = key
+            resultData['data'] = data
+            result.append(resultData)
+    #Convert to JSON for return
+    result = json.dumps(result)
+    logging.info(result)
+    return f'{result}'
+
+
+@app.route('/api/v1/move/<getData>', methods=['GET'])
+def api_move(getData):
+    #Allowed fields
+    AllowedKeys = ['computer','ou']
+    AllowedValues = ['new','staging']
+    OUs = {'new':'OU=New Computers,OU=NWMS Computers,DC=internal,DC=northwestmotorsportinc,DC=com','staging':'OU=Staging,OU=New Computers,OU=NWMS Computers,DC=internal,DC=northwestmotorsportinc,DC=com'}
+    #Split data
+    requestData = convertRequest(getData)
+    #Get List of Keys
+    requestList = list(requestData)
+    #Check if computer is specified
+    if AllowedKeys[0] not in requestData:
+        result = {"result": 1, "description": "failure", "message": 'Error, no computer defined'}
+    elif len(requestList) != 2:
+        result = {"result": 1, "description": "failure", "message": 'Error, incorrect number of parameters defined'}
+    #Check if all attributes are in Allowed list
+    elif len(set(requestList).difference(AllowedKeys)) > 0:
+        result = {"result": 1, "description": "failure", "message": f'{requestList}\n{AllowedKeys}'}
+        #str(set(requestList).difference(AllowedKeys))
+    #Check if OU Value is allowed
+    elif requestData['ou'] not in AllowedValues:
+        result = {"result": 1, "description": "failure", "message": "OUs must be 'new' or 'staging'"}
+    #Process request
+    else:
+        result = []
+        search_filter = requestData['computer']
+        search_filter = f'(cn={search_filter})'
+        requestData.pop('computer')
+        for key in requestData:
+            requestValue = requestData[key]
+        new_ou = OUs[requestValue]
+        resultData = ldap.move(server_Env, user_name_Env2, user_pass_Env2, search_base_Env, search_attributes_Env ,search_filter, new_ou)
+        resultData['computer'] = search_filter
+        resultData['data'] = new_ou
+        result.append(resultData)
+    #Convert to JSON for return
+    result = json.dumps(result)
+    logging.info(result)
+    return f'{result}'
+
 
 @app.route("/cron_discovery")
 def cron_discovery():
+    logging.info('Running /cron_dicovery')
     import subprocess
     subprocess.Popen(['python3.7', 'discovery.py'])
 
 
 @app.route("/cron_prune")
 def cron_prune():
+    logging.info('Running /cron_prune')
     import subprocess
     subprocess.Popen(['python3.7', 'prune.py'])
 
 
 sched = BackgroundScheduler(daemon=True)
-sched.add_job(cron_discovery,'interval',minutes=10)
+sched.add_job(cron_discovery,'interval',minutes=5)
 sched.add_job(cron_prune,'interval',minutes=300)
 sched.start()
 
-# if you don't want to use https or you want debugging
-# if __name__ == "__main__":
+#if you don't want to use https or you want debugging
+#if __name__ == "__main__":
 #    app.run(host="0.0.0.0", debug=True)
 
 if __name__ == "__main__":
