@@ -1,0 +1,41 @@
+{
+    "AppKeys": [
+        "1234567890"
+    ],
+    "database": "database.sqlite",
+    "locations": [
+        "unknown"
+    ],
+    "overview_filter": [
+        "example"
+    ],
+    "search_attributes": [
+        "cn",
+        "distinguishedName",
+        "dNSHostName",
+        "lastLogon",
+        "operatingSystem",
+        "operatingSystemServicePack",
+        "operatingSystemVersion",
+        "description",
+        "lastLogonTimestamp",
+        "extensionAttribute3",
+        "extensionAttribute2",
+        "extensionAttribute5"
+    ],
+    "search_base": "OU=Computers,DC=internal,DC=contoso,DC=com",
+    "search_filter": [
+        "Retired Computers",
+        "Inactive Computers"
+    ],
+    "secretKey": "123515aweqwqe",
+    "server": "server.internal.contoso.com",
+    "subnet_dict": {
+        "-": "unknown",
+        "0.0.0": "unknown",
+        "0.0.0.0": "unknown"
+    },
+    "test": "tester",
+    "user_name": "contoso\\user",
+    "user_pass": "pass"
+}
