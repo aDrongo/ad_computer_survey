@@ -30,6 +30,7 @@ app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 Models.db.init_app(app)
 app.app_context().push()
+Models.db.create_all()
 
 def require_appkey(view_function):
     @wraps(view_function)
