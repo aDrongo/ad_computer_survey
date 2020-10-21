@@ -4,7 +4,8 @@
     ],
     "database": "database.sqlite",
     "locations": [
-        "unknown"
+        "Global",
+        "Google"
     ],
     "overview_filter": [
         "example"
@@ -15,13 +16,12 @@
         "dNSHostName",
         "lastLogon",
         "operatingSystem",
-        "operatingSystemServicePack",
         "operatingSystemVersion",
         "description",
         "lastLogonTimestamp",
-        "extensionAttribute3",
+        "extensionAttribute1",
         "extensionAttribute2",
-        "extensionAttribute5"
+        "extensionAttribute3"
     ],
     "search_base": "OU=Computers,DC=internal,DC=contoso,DC=com",
     "search_filter": [
@@ -31,9 +31,8 @@
     "secretKey": "123515aweqwqe",
     "server": "server.internal.contoso.com",
     "subnet_dict": {
-        "-": "unknown",
-        "0.0.0": "unknown",
-        "0.0.0.0": "unknown"
+        "8.8.8.8/32": "Google",
+        "0.0.0.0/0": "Global"
     },
     "test": "tester",
     "user_name": "contoso\\user",

@@ -1,12 +1,16 @@
+import netaddr
+
 import time
 import re
 import logging
 import os
 import asyncio
+
 import modules.config as Config
 
+
 config = Config.load()
-SUBNETS = config['subnet_dict']
+subnets = config['subnet_dict']
 
 def scan(devices):
     start_datetime = time.monotonic()
@@ -87,12 +91,9 @@ def get_IP(string):
     except:
         return '-'
 
-def get_subnet(string):
-    try:
-        return re.search(r'\d+\.\d+\.\d+', str(string)).group(0)
-    except:
-        return '-'
-
 def get_location(string):
-    subnet_ip = get_subnet(string)
-    return SUBNETS.get(f"{subnet_ip}", 'unknown')
+    ip = netaddr.IPAddress(string)
+    for key in subnets:
+        if (ip in netaddr.IPNetwork(key)):
+            return subnets[key]
+    return 'unknown'

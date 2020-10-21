@@ -12,7 +12,7 @@ def get_device(id):
 
 def get_locations():
     dynamic_locations = [row.location for row in Models.Device.query.with_entities(Models.Device.location).distinct().all()]
-    locations = config['locations']
+    locations = list(config['subnet_dict'].values())
     for l in dynamic_locations:
         if l not in locations:
             locations.append(l)
