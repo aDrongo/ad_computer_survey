@@ -89,10 +89,10 @@ def get_IP(string):
     try:
         return (re.search(r'\d+\.\d+\.\d+\.\d+', str(string))).group(0)
     except:
-        return '-'
+        return '0.0.0.0'
 
 def get_location(string):
-    ip = netaddr.IPAddress(string)
+    ip = netaddr.IPAddress(get_IP(string))
     for key in subnets:
         if (ip in netaddr.IPNetwork(key)):
             return subnets[key]
