@@ -9,7 +9,9 @@ Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
 Vue.config.productionTip = false
 
-axios.defaults.baseURL = 'http://localhost:5000'
+axios.defaults.baseURL = window.location.origin.split(':')[0] + ':' + window.location.origin.split(':')[1] + ":5000"
+
+console.log(axios.defaults.baseURL)
 
 new Vue({
   render: h => h(App),
