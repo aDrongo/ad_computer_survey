@@ -12,7 +12,17 @@ def get_device(id):
 
 def get_locations():
     dynamic_locations = [row.location for row in Models.Device.query.with_entities(Models.Device.location).distinct().all()]
-    return dynamic_locations
+    locations_order = config['locations_order']
+    for l in dynamic_locations:
+        if l not in locations_order:
+            locations_order.append(l)
+    try:
+        index = locations_order.index('unknown')
+        unknown = locations_order.pop(index)
+        locations_order.append(unknown)
+    except ValueError:
+        pass
+    return locations_order
 
 def update_device(device):
     """Will Insert or Update Database with Device"""
