@@ -7,3 +7,5 @@ def load():
     except Exception as e:
         print('Config file not loaded')
         raise e
+
+config = load()

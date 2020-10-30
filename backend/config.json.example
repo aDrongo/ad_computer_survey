@@ -1,6 +1,8 @@
 {
     "database": "database.sqlite",
     "locations": [
+        "LAN",
+        "Global",
         "unknown"
     ],
     "search_attributes": [
@@ -24,12 +26,15 @@
         "Retired Computers",
         "Inactive Computers"
     ],
-    "secretKey": "123515aweqwqe",
+    "secretKey": "somekey12345",
     "server": "server.internal.contoso.com",
     "subnet_dict": {
-        "192.168.0.1/24: "LAN"
+        "10.0.0.0/8": "LAN",
+        "172.16.0.0/12": "LAN",
+        "192.168.0.0/16": "LAN",
         "0.0.0.0/0": "Global"
     },
+    "scan_schedule": "300",
     "admin_password": "testing1234",
     "user_name": "contoso\\user",
     "user_pass": "pass"

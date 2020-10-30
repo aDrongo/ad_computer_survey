@@ -1,9 +1,9 @@
 import time
 
 import modules.models as Models
-import modules.config as Config
 
-config = Config.load()
+from modules.logging import logging
+from modules.config import config
 
 def check_user(username,password):
     user = Models.User.query.filter_by(username=f"{username}")
@@ -99,7 +99,6 @@ def delete_device(device):
         Models.db.session.rollback()
         return {"Error":e}
     return {"Success":f"Deleted device {device.id}"}
-
 
 def sync_ldap_devices(ldap_devices):
     devices = Models.ldap_to_devices(ldap_devices)

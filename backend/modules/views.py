@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify, abort
 
-import modules.config as Config
+from modules.logging import logging
+from modules.config import config
 import modules.database as Database
 import modules.models as Models
 import modules.ldap as Ldap
@@ -10,12 +11,10 @@ from modules.tools import get_token,requires_auth,check_auth,calc_hash
 
 views = Blueprint('views', __name__)
 
-#update_user((Models.User(username='admin',password=hash(config['admin_password']))))
-
 def no_object_found():
     return jsonify({"error": "No Object Found"}), 404
 
-@views.route("/api/login", methods=['GET','POST'])
+@views.route("/login", methods=['GET','POST'])
 def login():
     if request.method == 'POST':
         username = request.headers.get('username')
@@ -33,7 +32,7 @@ def login():
         else:
             return jsonify({'error': 'Auth Token Incorrect'}), 210
 
-@views.route("/api/users", methods=['GET', 'POST','DELETE'])
+@views.route("/users", methods=['GET', 'POST','DELETE'])
 @requires_auth
 def users():
     if request.method == 'POST':
@@ -63,11 +62,11 @@ def users():
         [users.append(u.username) for u in Database.get_users() if u.username != "admin"]
         return jsonify(users)
 
-@views.route("/api/devices")
+@views.route("/devices")
 def devices():
     return jsonify([device.to_dict() for device in Database.get_devices()])
 
-@views.route("/api/device/<id>", methods=['GET', 'POST','DELETE'])
+@views.route("/device/<id>", methods=['GET', 'POST','DELETE'])
 @requires_auth
 def device(id):
     if request.method == 'POST':
@@ -78,11 +77,11 @@ def device(id):
         device = Database.get_device(id)
         return jsonify(device.to_dict()) if device else no_object_found()
 
-@views.route("/api/locations")
+@views.route("/locations")
 def locations():
     return jsonify(Database.get_locations())
 
-@views.route("/api/scan")
+@views.route("/scan")
 def scans():
     try:
         ldap_devices = Ldap.search()
@@ -94,7 +93,7 @@ def scans():
     [Database.update_device(r) for r in results]
     return jsonify([device.to_dict() for device in results])
 
-@views.route("/api/scan/<id>")
+@views.route("/scan/<id>")
 def scan(id):
     try:
         ldap_devices = Ldap.search(id)
@@ -109,10 +108,9 @@ def scan(id):
         [Database.update_device(r) for r in results]
         return jsonify([device.to_dict() for device in results])
 
-@views.route("/api/configuration", methods=['GET', 'POST'])
+@views.route("/configuration", methods=['GET', 'POST'])
 @requires_auth
 def configuration():
-    config = Config.load()
     if request.method == 'POST':
         with open("config.json.backup", "w") as backup:
             backup.write(json.dumps(config, indent=4, sort_keys=True))
@@ -123,14 +121,14 @@ def configuration():
     else:
         return jsonify(config)
 
-@views.route("/api/logs/plain")
+@views.route("/logs/plain")
 @requires_auth
 def logs_plain():
     with open('errors.log', 'r') as f:
         data = f.read()
     return data.replace('\n','<br>')
 
-@views.route("/api/logs/json")
+@views.route("/logs/json")
 @requires_auth
 def logs_json():
     data = []
@@ -144,8 +142,3 @@ def logs_json():
             }
             data.append(obj)
     return jsonify(data)
-
-@views.route("/cron_scan")
-def cron_scan():
-    return 200
-    #return requests.get('http://localhost:5000/api/scan').content

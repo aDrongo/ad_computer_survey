@@ -15,8 +15,12 @@ vim ldap-device-surveyor/backend/config.json
 ## Create SSL Certs as server.x509 & server.key
 You can change web.py to not use SSL by editing main.py in the run section.
 
-## Run api temporarily to check it works.
+## Initialize application and test.
+python3 modules/init.py
 python3 main.py
+
+localhost:5000/api/scan
+localhost:5000/api/devices
 
 ## Create Service for permenant Run
 sudo vim /etc/systemd/system/lds.service  
