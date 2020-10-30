@@ -1,18 +1,22 @@
 <template>
-  <div class="Location m-1" :id='location'>
-    <div class="row m-2">
-      <div class="col-">
-      <b-button v-b-toggle="'collapse-' + removeSpace(location)">
-        {{location}}
-      </b-button>
+ <div>
+   <template v-if="locationDevices.length > 0">
+    <div class="Location m-1" :id='location'>
+      <div class="row m-2">
+        <div class="col-">
+        <b-button  @click="$emit('opened-location', location)">
+          {{location}}
+        </b-button>
+        </div>
+        <div class="col-">
+        <DevicesOverview v-bind:locationDevices="locationDevices" v-bind:location="location" v-on:scan-device="emitScanDevice"/>
+        </div>
       </div>
-      <div class="col-">
-      <DevicesOverview v-bind:devices="devices" v-bind:location="location" v-on:scan-device="emitScanDevice"/>
-      </div>
+      <b-collapse :id="'collapse-' + removeSpace(location)" :visible="location === opened">
+        <Devices v-bind:locationDevices="locationDevices" v-bind:location="location" v-on:scan-device="emitScanDevice" />
+      </b-collapse>
     </div>
-    <b-collapse :id="'collapse-' + removeSpace(location)">
-      <Devices v-bind:devices="devices" v-bind:location="location" v-on:scan-device="emitScanDevice" />
-    </b-collapse>
+   </template>
   </div>
 </template>
 
@@ -26,7 +30,7 @@ export default {
     Devices,
     DevicesOverview
   },
-  props: ["devices","location"],
+  props: ["locationDevices","location","opened"],
   methods: {
     emitScanDevice(item) {
             this.$emit("scan-device", item)

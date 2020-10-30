@@ -14,13 +14,13 @@
           :state="idState"
           invalid-feedback="ID is required"
         >
-          <b-form-input
+          <b-form-input class="mt-1"
             id="id-input"
             v-model="id"
             :state="idState"
             required
           ></b-form-input>
-          <b-form-radio-group
+          <b-form-radio-group class="mt-1"
             id="radio-group-1"
             v-model="selected"
             :options="options"

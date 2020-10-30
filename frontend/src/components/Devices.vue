@@ -1,7 +1,7 @@
 <template>
     <div class=".table-responsive m-3">
-        <b-table responsive small sort-icon-left hover
-            :items="getLocationDevices()" 
+        <b-table responsive small  striped sort-icon-left hover scrollable 
+            :items="locationDevices" 
             :fields="fields" 
             :sort-by.sync="sortBy" 
             :sort-desc.sync="sortDesc" 
@@ -17,7 +17,7 @@
 
 export default {
     name: 'Devices',
-    props: ["devices", "location"],
+    props: ["locationDevices", "location"],
     data() {
         return {
             sortBy: "ping_code",
@@ -77,20 +77,37 @@ export default {
                     key:'version',
                     sortable: true,
                     label:"Version"
-                }
+                },
+                {
+                    key:'attribute1',
+                    sortable: true,
+                    label:"Attribute1"
+                },
+                {
+                    key:'attribute2',
+                    sortable: true,
+                    label:"Attribute2"
+                },
+                {
+                    key:'attribute3',
+                    sortable: true,
+                    label:"Attribute3"
+                },
+                {
+                    key:'attribute4',
+                    sortable: true,
+                    label:"Attribute4"
+                },
+                {
+                    key:'attribute5',
+                    sortable: true,
+                    label:"Attribute5"
+                },
+                
             ]
         }
     },
     methods: {
-        getLocationDevices: function(){
-            var results = []
-            for (var i=0; i<this.devices.length; i++){
-                if (this.devices[i].location == this.location){
-                    results.push(this.devices[i])
-                }
-            }
-            return results
-        },
         ping_code_class(value){
             if (value == 0){
                 return "up"

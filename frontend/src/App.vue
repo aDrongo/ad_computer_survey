@@ -9,12 +9,18 @@
         <NavBar 
           v-on:scan-all="scanAll" 
           v-on:modify-device="modifyDevice"
+          v-on:do-login="login"
+          v-on:do-logout="logout"
+          v-on:modify-user="modifyUser"
+          :user="user"
         />
         <div v-for="location in locations" :key="location" class="locations">
           <Location 
             :location="location" 
-            :devices="devices"
+            :locationDevices="getLocationDevices(devices,location)"
+            :opened="opened"
             v-on:scan-device="scanDevice"
+            v-on:opened-location="openedLocation"
           />
         </div>
       </div>
@@ -32,11 +38,66 @@ export default {
     NavBar,
     Location
   },
+  data() {
+      return {
+          loading_devices: true,
+          devices: [],
+          loading_locaitons: true,
+          locations: [],
+          renderKey: 0,
+          opened: null,
+          user: null
+      };
+  },
   methods: {
-    toast(message,header){
+    toast(message,header=null){
+      if (!header) header = "Notification";
       this.$bvToast.toast(message, {
           title: header,
           autoHideDelay: 3000})
+    },
+
+    openedLocation(location){
+      if (this.opened === location){
+        this.opened = null;
+      }
+      else {
+        this.opened = location;
+      }
+    },
+
+    getLocationDevices(devices,location){
+        var results = []
+        for (var i=0; i<devices.length; i++){
+            if (devices[i].location == location){
+                results.push(devices[i])
+            }
+        }
+        results.sort((a,b) => (a.ping_code < b.ping_code) ? 1 : -1)
+        return results
+    },
+
+    logout(){
+      this.toast(('Logging out ' + this.user),'Notification');
+      this.user = null;
+      localStorage.setItem('lds-user', null);
+      localStorage.setItem('lds-user-token', null)
+    },
+
+    async login(form){
+      await Api.login(form.username, form.password).then(
+        async (response) => {
+          if (response.status == 200){
+            this.toast(('Welcome ' + form.username),'Notification');
+            this.user = form.username;
+            localStorage.setItem('lds-user', form.username);
+            localStorage.setItem('lds-user-token', response.data.token)
+          }
+          else if (response.status == 401){
+            alert("Incorrect Login")
+          }
+        }
+      )
     },
 
     async scanDevice(item){
@@ -48,7 +109,6 @@ export default {
           (device[0].id + ' is ' + this.convertCode(device[0].ping_code)),
           'Notification')
       })
-      .catch(error => {this.toast("Scan Failed, see logs","Notification");console.log(error)})
     },
 
     convertCode(code){
@@ -70,52 +130,54 @@ export default {
         await this.refreshData();
         this.toast("Scan Completed","Notification")
       })
-      .catch(error => {this.toast("Scan Failed, see logs","Notification");console.log(error)})
     },
 
     async refreshData(){
-      await Api.getDevices()
+      await Api.getDevices() 
       .then(
         devices => {
           this.devices = devices
       })
-      .catch(error => console.log(error))
       .finally(() => {
         this.renderKey++;
       });
     },
+
     async modifyDevice(device){
       if (device.modify == "Add"){
         await Api.addDevice(device.id).then(async () => {
           await this.scanDevice(device.id);
-        }).catch(error => console.log(error))
+        })
       }
       else if (device.modify == "Remove"){
         await Api.removeDevice(device.id).then(async () => {
           await this.refreshData().then(() => {
             this.toast(("Removed " + device.id), "Notification")
-          }).catch(error => console.log(error))
-        }).catch(error => console.log(error))
+          })
+        })
+      }
+    },
+
+    async modifyUser(form){
+      if (form.modify == "Add User" || form.modify == "Reset Password"){
+        await Api.updateUser(form.username,form.password).then((response) => {
+          if (response.status == 200) this.toast("Completed: " + form.modify + " for " + form.username)
+        })
+      }
+      else if (form.modify == "Remove User"){
+        await Api.removeUser(form.username).then((response) => {
+          if (response.status == 200) this.toast("Completed: " + form.modify + " for " + form.username)
+        })
       }
     }
   },
-  data() {
-      return {
-          loading_devices: true,
-          devices: [],
-          loading_locaitons: true,
-          locations: [],
-          renderKey: 0
-      };
-  },
-
   created() {
+    this.user = localStorage.getItem('lds-user')
     Api.getDevices()
       .then(
         devices => {
           this.devices = devices
         })
-      .catch(error => console.log(error))
       .finally(() => {
         this.loading_devices = false
       });
@@ -124,15 +186,22 @@ export default {
       .then(locations => {
         this.locations = locations
       })
-      .catch(error => console.log(error))
       .finally(() => {
         this.loading_locations = false
     });
   },
 
   mounted() {
-    this.interval = setInterval(function(){
-      this.refreshData()}
+    this.interval = setInterval(async function(){
+      await Api.checkAuth().then((response) => {
+        if (response.status == 210){
+          if (this.user && this.user != "null"){
+            this.logout()
+          }
+        }
+      })
+      await this.refreshData()
+      }
     .bind(this),60000);
   },
 

@@ -1,8 +1,49 @@
-import modules.models as Models
-import modules.config as Config
 import time
 
+import modules.models as Models
+import modules.config as Config
+
 config = Config.load()
+
+def check_user(username,password):
+    user = Models.User.query.filter_by(username=f"{username}")
+    if user.count() == 0:
+        return False
+    else:
+        return password == user.first().password
+
+def get_users():
+    return Models.User.query.all()
+
+def update_user(user):
+    existing_user = Models.User.query.filter_by(username=f'{user.username}')
+    if existing_user.count() > 0:
+        Models.db.session.merge(user)
+        try:
+            Models.db.session.commit()
+        except:
+            Models.db.session.rollback()
+            return False
+    else:
+        Models.db.session.add(user)
+        try:
+            Models.db.session.commit()
+        except:
+            Models.db.session.rollback()
+            return False
+    return True
+
+def delete_user(user):
+    existing_user = Models.User.query.filter_by(username=f'{user.username}').scalar()
+    if existing_user:
+        Models.db.session.delete(existing_user)
+        try:
+            Models.db.session.commit()
+        except Exception as e:
+            Models.db.session.rollback()
+            return {"Error":e}
+        return {"Success":f"Deleted user {user.username}"}
+    return {"Error":"User not found"}
 
 def get_devices():
     return Models.Device.query.all()
@@ -29,7 +70,10 @@ def update_device(device):
     existing_device = Models.Device.query.filter_by(id=f'{device.id}')
     if existing_device.count() > 0:
         if device.location == 'unknown':
-            device.location = existing_device.first().location
+            if (device.attribute2 and device.attribute2 != 'unknown'):
+                device.location = device.attribute2
+            else:
+                device.location = existing_device.first().location
         Models.db.session.merge(device)
         try:
             Models.db.session.commit()

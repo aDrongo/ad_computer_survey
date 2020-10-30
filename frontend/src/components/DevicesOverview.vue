@@ -2,9 +2,9 @@
     <b-table-simple small>
         <b-tr>
             <b-td 
+            v-for="device in locationDevices" 
             :title="device.id" 
             :class="ping_code_class(device.ping_code)" 
-            v-for="device in getLocationDevices()" 
             :key="device.id"
             v-on:click.stop="clicked(device)">
                 <div class="overview-td">
@@ -20,33 +20,8 @@
 
 export default {
     name: 'DevicesOverview',
-    props: ["devices", "location"],
-    data() {
-        return {
-            sortBy: "ping_code",
-            sortDesc: true,
-            selectMode: "single",
-            fields: [
-                {
-                    key:'ping_code',
-                    sortable: true,
-                    label: 'Status',
-                    tdClass: "ping_code_class",
-                    thClass: "thead-dark"
-                }
-            ]
-        }
-    },
+    props: ["locationDevices", "location"],
     methods: {
-        getLocationDevices: function(){
-            var results = []
-            for (var i=0; i<this.devices.length; i++){
-                if (this.devices[i].location == this.location){
-                    results.push(this.devices[i])
-                }
-            }
-            return results
-        },
         ping_code_class(value){
             if (value == 0){
                 return "up"
@@ -87,5 +62,6 @@ td {
 }
 .up, .down, .dns {
     border-radius: 0.25rem;
+    cursor: pointer;
 }
 </style>
