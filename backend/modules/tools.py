@@ -5,9 +5,7 @@ import datetime
 import hashlib
 import jwt
 
-import modules.config as Config
-
-config = Config.load()
+from modules.config import config
 
 def calc_hash(string):
     return hashlib.sha256(string.encode()).hexdigest()

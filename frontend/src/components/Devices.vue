@@ -6,7 +6,7 @@
             :sort-by.sync="sortBy" 
             :sort-desc.sync="sortDesc" 
             :tbody-tr-class="'pointer'"
-            @row-clicked="clicked"
+            @row-clicked="climcked"
             head-variant="dark">
         </b-table>
     </div>
@@ -123,7 +123,7 @@ export default {
             if (static_time == null){
                 return '-'
             }
-            var relative_time = Math.round((Date.now() - Date.parse(static_time)) / 60000)
+            var relative_time = Math.round((Date.now() - Date.parse(static_time+'+0000')) / 60000)
             if (relative_time >= 60 && relative_time < 1440){
                 relative_time = Math.round(relative_time / 60) + 'h'
             }

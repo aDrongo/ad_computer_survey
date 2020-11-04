@@ -1,0 +1,7 @@
+.git/
+.vscode/
+__pycache__/
+node_modules/
+dist/
+.gitignore
+package-lock.json

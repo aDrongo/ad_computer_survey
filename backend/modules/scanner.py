@@ -1,5 +1,6 @@
 import netaddr
 
+from datetime import datetime
 import time
 import re
 import logging
@@ -13,12 +14,12 @@ config = Config.load()
 subnets = config['subnet_dict']
 
 def scan(devices):
-    start_datetime = time.monotonic()
+    start_time = time.monotonic()
 
     results = asyncio.run(main(devices))
 
-    end_datetime = time.monotonic()
-    logging.info(f'Completed {len(devices)} in {end_datetime - start_datetime} seconds')
+    end_time = time.monotonic()
+    logging.info(f'Completed {len(devices)} in {end_time - start_time} seconds')
 
     return results
     
@@ -28,7 +29,7 @@ async def main(devices):
 async def survey_device(device):
     ping_string, ping_code = await ping_device(device.id)
     device = interpret_ping_result(ping_string, ping_code, device)
-    cur_time = str(time.strftime("%Y-%m-%d %H:%M"))
+    cur_time = datetime.utcnow().strftime("%Y-%m-%d %H:%M")
     device.time_stamp = cur_time
     if (device.ping_code == 0):
         device.lastup = cur_time
@@ -40,8 +41,7 @@ async def ping_device(device):
             'ping',
             f'{device}',
             '-c 1',
-            '-w 2',
-            '-4',
+            #'-4'
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE)
     elif os.name == 'nt':
