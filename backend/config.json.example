@@ -1,6 +1,6 @@
 {
     "database": "database.sqlite",
-    "locations": [
+    "locations_order": [
         "LAN",
         "Global",
         "unknown"

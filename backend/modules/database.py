@@ -2,7 +2,7 @@ import time
 
 import modules.models as Models
 
-from modules.logging import logging
+from modules.logger import logging
 from modules.config import config
 
 def check_user(username,password):

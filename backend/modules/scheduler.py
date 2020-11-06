@@ -1,7 +1,7 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 import requests
 
-from modules.logging import logging
+from modules.logger import logging
 from modules.config import config
 
 scheduler = BackgroundScheduler()

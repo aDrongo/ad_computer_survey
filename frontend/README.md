@@ -1,9 +1,11 @@
 # Frontend LDS
 
-## Install npm & serve
-sudo apt-get npm
-npm install -g serve
+## Install
+sudo apt-get npm  
+npm install -g serve  
 
+npm install  
+npm run build  
 
 ## Create Service for permenant Run
 sudo vim /etc/systemd/system/lds-serve.service  

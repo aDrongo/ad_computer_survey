@@ -3,14 +3,12 @@ import netaddr
 from datetime import datetime
 import time
 import re
-import logging
 import os
 import asyncio
 
-import modules.config as Config
+from modules.logger import logging
+from modules.config import config
 
-
-config = Config.load()
 subnets = config['subnet_dict']
 
 def scan(devices):

@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, abort
 
-from modules.logging import logging
+from modules.logger import logging
 from modules.config import config
 import modules.database as Database
 import modules.models as Models
