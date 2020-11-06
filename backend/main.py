@@ -23,12 +23,7 @@ app.app_context().push()
 db.create_all()
 
 app.register_blueprint(views,url_prefix='/api')
+scheduler.start()
 
 if __name__ == "__main__":
-    scheduler.start()
-    if(os.environ.get('environment', None) == 'PROD'):
-        print('Running in Prod')
-        app.run(host="0.0.0.0", ssl_context=('./server.x509', './server.key'), use_reloader=False)
-    else:
-        print('Running in Dev')
-        app.run(host="0.0.0.0", debug=True, use_reloader=False)
+    app.run(host="0.0.0.0", debug=True, use_reloader=False)
