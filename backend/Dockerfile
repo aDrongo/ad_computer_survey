@@ -14,5 +14,8 @@ RUN python3.8 /opt/ldap-device-surveyor/backend/init.py
 
 EXPOSE 5000
 ENTRYPOINT ["gunicorn","--bind", "0.0.0.0:5000", "wsgi:app"]
-#"--certfile=server.crt" "--keyfile=server.key"
+#Insert following to entrypoint array for SSL
+# ,"--certfile=server.crt", "--keyfile=server.key"
+
+#Development optional server
 #ENTRYPOINT ["/bin/python3.8","/opt/ldap-device-surveyor/backend/main.py"]

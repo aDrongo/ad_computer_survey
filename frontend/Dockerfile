@@ -10,4 +10,6 @@ FROM nginx as production-stage
 LABEL maintainer="ben gardner <mail@ben-gardner.com>"
 RUN mkdir /app
 COPY dist/ /app
+#COPY server.key /etc/nginx/certs/
+#COPY server.crt /etc/nginx/certs/
 COPY nginx.conf /etc/nginx/nginx.conf

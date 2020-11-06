@@ -23,7 +23,7 @@ app.app_context().push()
 db.create_all()
 
 app.register_blueprint(views,url_prefix='/api')
-scheduler.start()
 
 if __name__ == "__main__":
+    scheduler.start()
     app.run(host="0.0.0.0", debug=True, use_reloader=False)
