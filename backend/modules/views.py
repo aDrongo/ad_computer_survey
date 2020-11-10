@@ -84,8 +84,9 @@ def locations():
 @views.route("/scan")
 def scans():
     try:
-        ldap_devices = Ldap.search()
-        Database.sync_ldap_devices(ldap_devices)
+        if (config['ldap_enabled']):
+            ldap_devices = Ldap.search()
+            Database.sync_ldap_devices(ldap_devices)
     except Exception as e:
         pass
     devices = Database.get_devices()
@@ -96,9 +97,11 @@ def scans():
 @views.route("/scan/<id>")
 def scan(id):
     try:
-        ldap_devices = Ldap.search(id)
-        Database.sync_ldap_devices(ldap_devices)
+        if (config['ldap_enabled']):
+            ldap_devices = Ldap.search(id)
+            Database.sync_ldap_devices(ldap_devices)
     except Exception as e:
+        logging.debug(e)
         pass
     device = Database.get_device(id)
     if device == None:
@@ -121,24 +124,18 @@ def configuration():
     else:
         return jsonify(config)
 
-@views.route("/logs/plain")
-@requires_auth
-def logs_plain():
-    with open('errors.log', 'r') as f:
-        data = f.read()
-    return data.replace('\n','<br>')
+@views.route("/history")
+def history():
+    history = Database.get_history()
+    if history:
+        return jsonify([h.to_dict() for h in history])
+    else:
+        return no_object_found()
 
-@views.route("/logs/json")
-@requires_auth
-def logs_json():
-    data = []
-    with open('errors.log', 'r') as f:
-        for l in f:
-            line = l.strip().split(" ")
-            obj = {
-                "time": ' '.join(line[0:2]),
-                "level": ' '.join(line[2:5]),
-                "message": ' '.join(line[5:])
-            }
-            data.append(obj)
-    return jsonify(data)
+@views.route("/history/<id>")
+def device_history(id):
+    history = Database.get_device_history(id)
+    if history:
+        return jsonify([h.to_dict() for h in history])
+    else:
+        return no_object_found()

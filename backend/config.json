@@ -34,6 +34,7 @@
         "192.168.0.0/16": "LAN",
         "0.0.0.0/0": "Global"
     },
+    "ldap_enabled": "true",
     "scan_schedule": "300",
     "admin_password": "testing1234",
     "user_name": "contoso\\user",

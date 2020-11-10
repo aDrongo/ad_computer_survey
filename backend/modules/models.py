@@ -32,6 +32,16 @@ class User(db.Model, SerializerMixin):
     username = db.Column(db.String(), unique=True, primary_key=True)
     password = db.Column(db.String())
 
+class History(db.Model, SerializerMixin):
+    """Table for history of changes"""
+    __tablename__ = 'history'
+    id = db.Column(db.Integer(), unique=True, primary_key=True)
+    device = db.Column(db.String())
+    time = db.Column(db.String())
+    fields_changed = db.Column(db.PickleType())
+    new_values = db.Column(db.PickleType())
+    old_values = db.Column(db.PickleType())
+
 def ldap_to_devices(ldap_devices):
     devices = []
     for device in ldap_devices:
@@ -41,7 +51,6 @@ def ldap_to_devices(ldap_devices):
             group = getGroup(device.distinguishedName.value),
             ldap = True,
             description = device.description.value,
-            #location = device.extensionAttribute2.value,
             lastlogon = device.lastlogon.value,
             os = device.operatingSystem.value,
             version = device.operatingSystemVersion.value,

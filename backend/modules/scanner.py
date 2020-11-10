@@ -12,12 +12,14 @@ from modules.config import config
 subnets = config['subnet_dict']
 
 def scan(devices):
+    device_count = len(devices)
+    logging.debug(f"Scanning {device_count}")
     start_time = time.monotonic()
 
     results = asyncio.run(main(devices))
 
     end_time = time.monotonic()
-    logging.info(f'Completed {len(devices)} in {end_time - start_time} seconds')
+    logging.info(f'Completed {device_count} in {end_time - start_time} seconds')
 
     return results
     

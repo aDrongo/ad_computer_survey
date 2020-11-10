@@ -1,4 +1,5 @@
 import time
+import json
 
 import modules.models as Models
 
@@ -49,7 +50,7 @@ def get_devices():
     return Models.Device.query.all()
 
 def get_device(id):
-    return Models.Device.query.filter_by(id=f"{id}").first()
+    return Models.Device.query.filter_by(id=f"{id}").scalar()
 
 def get_locations():
     dynamic_locations = [row.location for row in Models.Device.query.with_entities(Models.Device.location).distinct().all()]
@@ -69,23 +70,30 @@ def update_device(device):
     """Will Insert or Update Database with Device"""
     existing_device = Models.Device.query.filter_by(id=f'{device.id}')
     if existing_device.count() > 0:
+        existing = existing_device.first()
         if device.location == 'unknown':
             if (device.attribute2 and device.attribute2 != 'unknown'):
                 device.location = device.attribute2
             else:
-                device.location = existing_device.first().location
+                device.location = existing.location
+        addDeviceHistory(device,existing)
         Models.db.session.merge(device)
         try:
             Models.db.session.commit()
-        except:
+        except Exception as e:
             Models.db.session.rollback()
+            print(e)
+            logging.debug(f'failed to commit {device.id}')
             return False
     else:
+        addDeviceHistory(device)
         Models.db.session.add(device)
         try:
             Models.db.session.commit()
-        except:
+        except Exception as e:
             Models.db.session.rollback()
+            print(e)
+            logging.debug(f'failed to commit {device.id}')
             return False
     return True
 
@@ -100,8 +108,61 @@ def delete_device(device):
         return {"Error":e}
     return {"Success":f"Deleted device {device.id}"}
 
+def get_history():
+    return Models.History.query.all()
+
+def get_device_history(id):
+    return Models.History.query.filter_by(device=f"{id}").all()
+
 def sync_ldap_devices(ldap_devices):
     devices = Models.ldap_to_devices(ldap_devices)
     for device in devices:
         update_device(device)
     pass
+
+def fieldsChanged(dict1, dict2):
+    fieldsChanged = []
+    keys = dict1.keys()
+    for k in keys:
+        if k not in ["time_stamp","ping_time","lastup","lastlogon","os","version"]:
+            if dict1[k] != dict2[k] and dict1[k] != None:
+                fieldsChanged.append(k)
+                print(k)
+                print(dict1[k])
+                print(dict2[k])
+    return fieldsChanged
+
+def addDeviceHistory(newDevice,oldDevice=False):
+    if (oldDevice):
+        keys = fieldsChanged(newDevice.to_dict(),oldDevice.to_dict())
+        if len(keys) > 0:
+            history = Models.History(
+                device = newDevice.id,
+                fields_changed = keys,
+                time = newDevice.time_stamp,
+                new_values = newDevice.to_dict(),
+                old_values = oldDevice.to_dict()
+            )
+            Models.db.session.add(history)
+            try:
+                Models.db.session.commit()
+            except Exception as e:
+                Models.db.session.rollback()
+                logging.debug(f'failed to commit history {newDevice.id}')
+                return False
+    else:
+        history = Models.History(
+                device = newDevice.id,
+                fields_changed = list(newDevice.to_dict().keys()),
+                time = newDevice.time_stamp,
+                new_values = newDevice.to_dict()
+            )
+        Models.db.session.add(history)
+        try:
+            Models.db.session.commit()
+        except Exception as e:
+            Models.db.session.rollback()
+            logging.debug(f'failed to commit history {newDevice.id}')
+            return False
+    pass
+    
