@@ -1,16 +1,16 @@
 <template>
   <div class="login-form">
       <template v-if="user != null && user != 'null'">
-          <span title="Logout"><a class="pointer" v-on:click="logout">{{ user }}</a></span>
+          <span title="Logout"><a v-on:click="logout">{{ user }}</a></span>
       </template>
       <template v-if="user == null || user == 'null'">
-        <a class="pointer" v-on:click="show">Login</a>
+        <a v-on:click="show">Login</a>
         <b-modal
         id="modal-login"
         ref="login-modal"
         title="Login"
         @show="resetModal"
-        @hidden="resetModal"
+        @hidden="hideModal"
         @ok="handleOk"
         >
         <form ref="login-form" @submit="handleSubmit">
@@ -55,21 +55,25 @@ export default {
   },
   methods: {
       show(){
-          this.$bvModal.show('modal-login')
-          this.$emit("pauseTimer", true)
+          this.$bvModal.show('modal-login');
+          this.$emit("pause-timer", true);
       },
       checkFormValidity() {
-        const valid = this.$refs['login-form'].checkValidity()
-        this.loginState = valid
+        const valid = this.$refs['login-form'].checkValidity();
+        this.loginState = valid;
         return valid
       },
+      hideModal(){
+        this.$emit("pause-timer", false);
+        this.resetModal()
+      },
       resetModal() {
-        this.username = ''
-        this.password = ''
+        this.username = '';
+        this.password = '';
         this.loginState = null
       },
       handleOk(bvModalEvt) {
-        bvModalEvt.preventDefault()
+        bvModalEvt.preventDefault();
         this.handleSubmit()
       },
       handleSubmit() {
@@ -80,7 +84,6 @@ export default {
 
         this.$nextTick(() => {
           this.$bvModal.hide('modal-login')
-          this.$emit("pauseTimer", false)
         })
       },
       logout(){
@@ -94,10 +97,5 @@ export default {
 btn {
     border: 0;
     padding: 0;
-}
-.pointer {
-    text-decoration: inherit;
-    color: inherit;
-    cursor: pointer;
 }
 </style>

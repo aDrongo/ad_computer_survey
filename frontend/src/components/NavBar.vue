@@ -1,29 +1,29 @@
 <template>
   <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
     <a class="navbar-brand" href="#">
-      <img src="https://cdn.nwmsrocks.com/img/3dc41c7.png" alt="Logo" style="width:40px;">
+      <img src="../assets/logo.png" alt="Logo" style="width:40px;">
     </a>
     <ul class="navbar-nav mr-auto">
       <li class="nav-item">
-        <a class="nav-link" href="#">Home</a>
+        <a class="nav-link pointer" href="#">Home</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" v-on:click='$emit("scan-all")'>Scan</a>
+        <a class="nav-link pointer" v-on:click='$emit("scan-all")'>Scan</a>
       </li>
       <template v-if="user">
       <li class="nav-item">
-        <a class="nav-link"><ModifyDevice v-on:modify-device="modifyDevice" v-on:pause-timer="pauseTimer"/></a>
+        <a class="nav-link pointer"><ModifyDevice v-on:modify-device="modifyDevice" v-on:pause-timer="pauseTimer"/></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link"><ModifyUsers v-on:modify-user="modifyUser" v-on:pause-timer="pauseTimer"/></a>
+        <a class="nav-link pointer"><ModifyUsers v-on:modify-user="modifyUser" v-on:pause-timer="pauseTimer"/></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link"><Logs v-on:pause-timer="pauseTimer"/></a>
+        <a class="nav-link pointer"><Logs v-on:pause-timer="pauseTimer"/></a>
       </li>
       </template>
     </ul>
     <ul class="navbar-nav">
-      <li class="nav-item"><a class="nav-link"><Login v-on:do-login="login" v-on:do-logout="logout" :user="user" v-on:pause-timer="pauseTimer"/></a></li>
+      <li class="nav-item pointer"><a class="nav-link"><Login v-on:do-login="login" v-on:do-logout="logout" :user="user" v-on:pause-timer="pauseTimer"/></a></li>
     </ul>
   </nav>
 </template>
@@ -45,7 +45,7 @@ export default {
   props: ["user"],
   methods: {
     pauseTimer(bool){
-      this.$emit("pauseTimer", bool)
+      this.$emit("pause-timer", bool)
     },
     modifyDevice(item) {
       this.$emit("modify-device", item)
