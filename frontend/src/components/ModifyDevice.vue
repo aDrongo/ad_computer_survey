@@ -6,7 +6,7 @@
       ref="modal"
       title="Modify Device"
       @show="resetModal"
-      @hidden="resetModal"
+      @hidden="hideModal"
       @ok="handleOk"
     >
       <form ref="form" @submit.stop.prevent="handleSubmit">
@@ -50,12 +50,17 @@ export default {
   },
   methods: {
       show(){
-          this.$bvModal.show('modal-modify-device')
+        this.$bvModal.show('modal-modify-device')
+        this.$emit("pauseTimer", true)
       },
       checkFormValidity() {
         const valid = this.$refs.form.checkValidity()
         this.idState = valid
         return valid
+      },
+      hideModal(){
+        this.resetModal()
+        this.$emit("pauseTimer", false)
       },
       resetModal() {
         this.id = ''

@@ -6,7 +6,7 @@
       ref="modal"
       title="Modify User"
       @show="resetModal"
-      @hidden="resetModal"
+      @hidden="hideModal"
       @ok="handleOk"
     >
         <b-list-group>
@@ -71,6 +71,7 @@ export default {
       show(){
           this.getUsers();
           this.$bvModal.show('modal-modify-user');
+          this.$emit("pauseTimer", true)
       },
       checkFormValidity() {
         const valid = this.$refs.form.checkValidity();
@@ -83,6 +84,10 @@ export default {
         this.password = '';
         this.selected = 'Reset Password';
         this.userState = null;
+      },
+      hideModal(){
+        this.$emit("pauseTimer", false)
+        this.resetModal()
       },
       handleOk(bvModalEvt) {
         bvModalEvt.preventDefault();

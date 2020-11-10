@@ -1,11 +1,12 @@
 <template>
-  <div class="modify-device modal-lg">
+  <div class="modal-lg">
     <a v-on:click="show">Logs</a>
     <b-modal
       id="modal-logs"
       title="Logs"
       size="xl"
       scrollable
+      @hidden="hideModal"
     >
         <pre class="my-4">
             {{ logs }}
@@ -28,12 +29,16 @@ export default {
   },
   methods: {
       show(){
-          this.getLogs()
-          this.$bvModal.show('modal-logs')
+        this.getLogs()
+        this.$bvModal.show('modal-logs')
+        this.$emit("pauseTimer", true)
       },
       async getLogs(){
-          let data = (await Api.getLogs()).reverse()
-          this.logs = JSON.stringify(data, null, 2)
+        let data = (await Api.getLogs()).reverse()
+        this.logs = JSON.stringify(data, null, 2)
+      },
+      hideModal(){
+        this.$emit("pauseTimer", false)
       }
   }
 }

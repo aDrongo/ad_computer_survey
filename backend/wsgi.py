@@ -1,6 +1,7 @@
 from main import app
-from modules.scheduler import scheduler
+from modules.init import init
+
 
 if __name__ == "__main__":
-    scheduler.start()
+    init()
     app.run()

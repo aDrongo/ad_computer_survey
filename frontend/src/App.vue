@@ -12,6 +12,7 @@
           v-on:do-login="login"
           v-on:do-logout="logout"
           v-on:modify-user="modifyUser"
+          v-on:pause-timer="pauseTimer"
           :user="user"
         />
         <div v-for="location in locations" :key="location" class="locations">
@@ -50,6 +51,14 @@ export default {
       };
   },
   methods: {
+    pauseTimer(pause){
+      if (pause){
+        clearInterval(this.interval)
+      }
+      else if (!pause) {
+        this.interval = setInterval(this.intervalFunc(),60000);
+      }
+    },
     toast(message,header=null){
       if (!header) header = "Notification";
       this.$bvToast.toast(message, {
@@ -169,7 +178,17 @@ export default {
           if (response.status == 200) this.toast("Completed: " + form.modify + " for " + form.username)
         })
       }
-    }
+    },
+    async intervalFunc(){
+      await Api.checkAuth().then((response) => {
+        if (response.status == 210){
+          if (this.user && this.user != "null"){
+            this.logout()
+          }
+        }
+      })
+      await this.refreshData()
+      }
   },
   created() {
     this.user = localStorage.getItem('lds-user')
@@ -192,17 +211,7 @@ export default {
   },
 
   mounted() {
-    this.interval = setInterval(async function(){
-      await Api.checkAuth().then((response) => {
-        if (response.status == 210){
-          if (this.user && this.user != "null"){
-            this.logout()
-          }
-        }
-      })
-      await this.refreshData()
-      }
-    .bind(this),60000);
+    this.interval = setInterval(this.intervalFunc(),60000);
   },
 
   beforeDestroy () {

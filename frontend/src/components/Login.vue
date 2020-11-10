@@ -8,12 +8,12 @@
         <b-modal
         id="modal-login"
         ref="login-modal"
-        title="login"
+        title="Login"
         @show="resetModal"
         @hidden="resetModal"
         @ok="handleOk"
         >
-        <form ref="login-form" @submit.stop.prevent="handleSubmit">
+        <form ref="login-form" @submit="handleSubmit">
             <b-form-group
             :state="loginState"
             invalid-feedback="Invalid input"
@@ -23,6 +23,7 @@
                 v-model="username"
                 :state="loginState"
                 placeholder="Username"
+                @keydown.enter.native="handleSubmit"
                 required
             >Username </b-form-input>
             <b-form-input class="mt-1"
@@ -30,6 +31,7 @@
                 type="password"
                 v-model="password"
                 :state="loginState"
+                @keydown.enter.native="handleSubmit"
                 placeholder="Password"
                 required
             >Password </b-form-input>
@@ -54,6 +56,7 @@ export default {
   methods: {
       show(){
           this.$bvModal.show('modal-login')
+          this.$emit("pauseTimer", true)
       },
       checkFormValidity() {
         const valid = this.$refs['login-form'].checkValidity()
@@ -77,6 +80,7 @@ export default {
 
         this.$nextTick(() => {
           this.$bvModal.hide('modal-login')
+          this.$emit("pauseTimer", false)
         })
       },
       logout(){

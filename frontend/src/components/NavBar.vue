@@ -12,17 +12,19 @@
       </li>
       <template v-if="user">
       <li class="nav-item">
-        <a class="nav-link"><ModifyDevice v-on:modify-device="modifyDevice"/></a>
+        <a class="nav-link"><ModifyDevice v-on:modify-device="modifyDevice" v-on:pause-timer="pauseTimer"/></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link"><ModifyUsers v-on:modify-user="modifyUser"/></a>
+        <a class="nav-link"><ModifyUsers v-on:modify-user="modifyUser" v-on:pause-timer="pauseTimer"/></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link"><Logs /></a>
+        <a class="nav-link"><Logs v-on:pause-timer="pauseTimer"/></a>
       </li>
       </template>
     </ul>
-    <a class="navbar-brand"><Login v-on:do-login="login" v-on:do-logout="logout" :user="user" /></a>
+    <ul class="navbar-nav">
+      <li class="nav-item"><a class="nav-link"><Login v-on:do-login="login" v-on:do-logout="logout" :user="user" v-on:pause-timer="pauseTimer"/></a></li>
+    </ul>
   </nav>
 </template>
 
@@ -42,6 +44,9 @@ export default {
   },
   props: ["user"],
   methods: {
+    pauseTimer(bool){
+      this.$emit("pauseTimer", bool)
+    },
     modifyDevice(item) {
       this.$emit("modify-device", item)
     },

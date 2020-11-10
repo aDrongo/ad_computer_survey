@@ -58,7 +58,7 @@ td {
     height: 100%;
     overflow: hidden;
     display: inline-block;
-    cursor: ;
+    cursor: pointer;
 }
 .up, .down, .dns {
     border-radius: 0.25rem;

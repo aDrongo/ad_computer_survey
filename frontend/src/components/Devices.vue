@@ -6,7 +6,7 @@
             :sort-by.sync="sortBy" 
             :sort-desc.sync="sortDesc" 
             :tbody-tr-class="'pointer'"
-            @row-clicked="climcked"
+            @row-clicked="clicked"
             head-variant="dark">
         </b-table>
     </div>
