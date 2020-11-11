@@ -71,7 +71,7 @@ export default {
       show(){
           this.getUsers();
           this.$bvModal.show('modal-modify-user');
-          this.$emit("pauseTimer", true)
+          this.$emit("pause-timer", true)
       },
       checkFormValidity() {
         const valid = this.$refs.form.checkValidity();
@@ -86,7 +86,7 @@ export default {
         this.userState = null;
       },
       hideModal(){
-        this.$emit("pauseTimer", false)
+        this.$emit("pause-timer", false)
         this.resetModal()
       },
       handleOk(bvModalEvt) {

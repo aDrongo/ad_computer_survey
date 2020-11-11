@@ -16,12 +16,12 @@ def get_token(username):
             'username': username, 
             'exp': (datetime.datetime.utcnow() + datetime.timedelta(days=1))
         },
-        config['secretKey'],
+        config['secret_key'],
         algorithm='HS256').decode('utf-8')
 
 def check_auth(token):
     try:
-        jwt.decode(token, config['secretKey'], algorithms='HS256')
+        jwt.decode(token, config['secret_key'], algorithms='HS256')
         return True
     except:
         return False

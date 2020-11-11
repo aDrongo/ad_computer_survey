@@ -10,7 +10,6 @@ python3.8 python3-pip iputils-ping && \
 pip3 install -r /opt/ldap-device-surveyor/backend/requirements.txt
 
 WORKDIR /opt/ldap-device-surveyor/backend/
-RUN python3.8 /opt/ldap-device-surveyor/backend/init.py
 
 EXPOSE 5000
 ENTRYPOINT ["gunicorn","--bind", "0.0.0.0:5000", "wsgi:app"]

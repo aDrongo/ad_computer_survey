@@ -51,7 +51,7 @@ export default {
   methods: {
       show(){
         this.$bvModal.show('modal-modify-device')
-        this.$emit("pauseTimer", true)
+        this.$emit("pause-timer", true)
       },
       checkFormValidity() {
         const valid = this.$refs.form.checkValidity()
@@ -60,7 +60,7 @@ export default {
       },
       hideModal(){
         this.resetModal()
-        this.$emit("pauseTimer", false)
+        this.$emit("pause-timer", false)
       },
       resetModal() {
         this.id = ''

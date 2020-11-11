@@ -53,11 +53,9 @@ export default {
   methods: {
     pauseTimer(pause){
       if (pause){
-        console.log('pause')
         clearInterval(this.interval)
       }
       else if (!pause) {
-        console.log('unpause')
         this.interval = setInterval(this.intervalFunc(),60000);
       }
     },
@@ -183,7 +181,7 @@ export default {
     },
     async intervalFunc(){
       await Api.checkAuth().then((response) => {
-        if (response.status == 210){
+        if (response.status != 200){
           if (this.user && this.user != "null"){
             this.logout()
           }
@@ -215,7 +213,7 @@ export default {
   mounted() {
     this.interval = setInterval(async function() {
       await Api.checkAuth().then((response) => {
-        if (response.status == 210){
+        if (response.status != 200){
           if (this.user && this.user != "null"){
             this.logout()
           }
@@ -259,6 +257,11 @@ a:hover{
     text-decoration: inherit;
     color: inherit;
     cursor: pointer;
+}
+.no-pointer {
+    text-decoration: inherit;
+    color: inherit;
+    cursor: default;
 }
 .up {
   background-color: rgb(50, 150, 50);

@@ -82,7 +82,7 @@ export default {
     },
     async getLogs(){
         try {
-            const response = await axios.get('/api/logs/json')
+            const response = await axios.get('/api/history')
             return response.data
         } catch (error) {
             console.log(error.response)

@@ -3,6 +3,7 @@ import json
 
 import modules.models as Models
 
+from datetime import datetime
 from modules.logger import logging
 from modules.config import config
 
@@ -139,7 +140,7 @@ def addDeviceHistory(newDevice,oldDevice=False):
             history = Models.History(
                 device = newDevice.id,
                 fields_changed = keys,
-                time = newDevice.time_stamp,
+                time = datetime.utcnow().strftime("%Y-%m-%d %H:%M"),
                 new_values = newDevice.to_dict(),
                 old_values = oldDevice.to_dict()
             )
@@ -154,7 +155,7 @@ def addDeviceHistory(newDevice,oldDevice=False):
         history = Models.History(
                 device = newDevice.id,
                 fields_changed = list(newDevice.to_dict().keys()),
-                time = newDevice.time_stamp,
+                time = datetime.utcnow().strftime("%Y-%m-%d %H:%M"),
                 new_values = newDevice.to_dict()
             )
         Models.db.session.add(history)

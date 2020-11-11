@@ -55,8 +55,8 @@ export default {
   },
   methods: {
       show(){
-          this.$bvModal.show('modal-login');
-          this.$emit("pause-timer", true);
+        this.$bvModal.show('modal-login');
+        this.$emit("pause-timer", true);
       },
       checkFormValidity() {
         const valid = this.$refs['login-form'].checkValidity();

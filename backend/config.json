@@ -26,7 +26,7 @@
         "Retired Computers",
         "Inactive Computers"
     ],
-    "secretKey": "somekey12345",
+    "secret_key": "somekey12345",
     "server": "server.internal.contoso.com",
     "subnet_dict": {
         "10.0.0.0/8": "LAN",
