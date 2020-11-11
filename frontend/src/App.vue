@@ -56,7 +56,16 @@ export default {
         clearInterval(this.interval)
       }
       else if (!pause) {
-        this.interval = setInterval(this.intervalFunc(),60000);
+        this.interval = setInterval(async function() {
+          await Api.checkAuth().then((response) => {
+            if (response.status != 200){
+              if (this.user && this.user != "null"){
+                this.logout()
+              }
+            }
+          })
+          await this.refreshData()
+        }.bind(this),60000);
       }
     },
     toast(message,header=null){
@@ -178,17 +187,7 @@ export default {
           if (response.status == 200) this.toast("Completed: " + form.modify + " for " + form.username)
         })
       }
-    },
-    async intervalFunc(){
-      await Api.checkAuth().then((response) => {
-        if (response.status != 200){
-          if (this.user && this.user != "null"){
-            this.logout()
-          }
-        }
-      })
-      await this.refreshData()
-      }
+    }
   },
   created() {
     this.user = localStorage.getItem('lds-user')
