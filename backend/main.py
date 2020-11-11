@@ -21,7 +21,7 @@ app.app_context().push()
 db.create_all()
 
 app.register_blueprint(views,url_prefix='/api')
+init()
 
 if __name__ == "__main__":
-    init()
     app.run(host="0.0.0.0", debug=True, use_reloader=False)
