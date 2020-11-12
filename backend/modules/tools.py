@@ -6,6 +6,12 @@ import hashlib
 import jwt
 
 from modules.config import config
+import modules.ldap as Ldap
+import modules.models as Models
+
+def no_object_found():
+    """General Error to return"""
+    return jsonify({"error": "No Object Found"}), 404
 
 def calc_hash(string):
     return hashlib.sha256(string.encode()).hexdigest()
