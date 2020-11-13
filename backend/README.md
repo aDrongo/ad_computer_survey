@@ -16,7 +16,6 @@ vim ldap-device-surveyor/backend/config.json
 Create SSL Certs as server.x509 & server.key and enable environmental variable 'PROD'
 
 ## Initialize application and test.
-python3 modules/init.py  
 python3 main.py  
 
 localhost:5000/api/scan  
