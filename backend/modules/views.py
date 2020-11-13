@@ -25,7 +25,7 @@ def login():
         auth = request.headers.get('Authorization')
         if not auth:
             return jsonify({'error': 'Auth Token Required'}), 210
-        if check_auth(auth):
+        elif check_auth(auth):
             return jsonify({'message': 'Success'}), 200
         else:
             return jsonify({'error': 'Auth Token Incorrect'}), 210

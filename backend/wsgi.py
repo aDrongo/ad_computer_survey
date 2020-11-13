@@ -1,6 +1,4 @@
-from main import app
-from modules.init import init
-
-
-if __name__ == "__main__":
-    app.run()
+from app import AppInitializer
+init = AppInitializer()
+init.setup()
+application = init.get_app()

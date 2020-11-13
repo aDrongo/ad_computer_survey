@@ -22,17 +22,18 @@ def update_user(user):
         Models.db.session.merge(user)
         try:
             Models.db.session.commit()
+            return user.to_dict()
         except:
             Models.db.session.rollback()
-            return False
+            return {"error":e}
     else:
         Models.db.session.add(user)
         try:
             Models.db.session.commit()
+            return user.to_dict()
         except:
             Models.db.session.rollback()
-            return False
-    return True
+            return {"error":e}
 
 def delete_user(user):
     existing_user = Models.User.query.filter_by(username=f'{user.username}').scalar()
@@ -42,6 +43,7 @@ def delete_user(user):
             Models.db.session.commit()
         except Exception as e:
             Models.db.session.rollback()
-            return {"Error":e}
-        return {"Success":f"Deleted user {user.username}"}
-    return {"Error":"User not found"}
+            return {"error":e}
+        return {"message":f"Deleted user {user.username}"}
+    else:
+        return {"error":"User not found"}

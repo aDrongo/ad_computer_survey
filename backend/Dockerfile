@@ -12,7 +12,7 @@ pip3 install -r /opt/ldap-device-surveyor/backend/requirements.txt
 WORKDIR /opt/ldap-device-surveyor/backend/
 
 EXPOSE 5000
-ENTRYPOINT ["gunicorn","--bind", "0.0.0.0:5000", "wsgi:app"]
+ENTRYPOINT ["gunicorn","--bind", "0.0.0.0:5000", "wsgi:application"]
 #Insert following to entrypoint array for SSL
 # ,"--certfile=server.crt", "--keyfile=server.key"
 
