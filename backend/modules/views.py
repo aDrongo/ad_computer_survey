@@ -72,7 +72,7 @@ def devices():
 @requires_auth
 def device(id):
     """Get, Post and Delete a Device"""
-    device = Device(id=id)
+    device = Models.Device(id=id)
     if request.method == 'POST':
         device.scan()
         device.sync_ldap()
@@ -80,7 +80,7 @@ def device(id):
         return jsonify(device.to_dict())
     device.get()
     if request.method == 'DELETE':
-        return jsonify(device.delete().to_dict()) if device else no_object_found()
+        return jsonify(device.delete()) if device else no_object_found()
     else:
         return jsonify(device.to_dict()) if device else no_object_found()
 
@@ -92,6 +92,7 @@ def locations():
 @views.route("/scan")
 def scans():
     devices = Models.Devices()
+    devices.get_devices()
     devices.sync_ldap()
     devices.scan()
     devices.update_devices()
@@ -111,7 +112,7 @@ def scan(id):
 @views.route("/history")
 def history():
     history = Models.Devices().get_history_dict()
-    return jsonify(history) if history else no_object_found()
+    return jsonify(history)
 
 @views.route("/history/<id>")
 def device_history(id):

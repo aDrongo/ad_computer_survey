@@ -124,7 +124,7 @@ export default {
       .then(async (device) => {
         await this.refreshData()
         this.toast(
-          (device[0].id + ' is ' + this.convertCode(device[0].ping_code)),
+          (device.id + ' is ' + this.convertCode(device.ping_code)),
           'Notification')
       })
     },
@@ -163,8 +163,9 @@ export default {
 
     async modifyDevice(device){
       if (device.modify == "Add"){
-        await Api.addDevice(device.id).then(async () => {
-          await this.scanDevice(device.id);
+        await Api.addDevice(device.id).then(async (device) => {
+        await this.refreshData()
+        this.toast((device.id + ' is ' + this.convertCode(device.ping_code)))
         })
       }
       else if (device.modify == "Remove"){

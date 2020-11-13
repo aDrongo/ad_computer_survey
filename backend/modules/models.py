@@ -21,7 +21,7 @@ class Devices():
         if self.get_devices():
             return [device.to_dict() for device in self.devices]
         else:
-            return None
+            return []
 
     def get_history(self):
         self.history = History.query.all()
@@ -31,7 +31,7 @@ class Devices():
         if self.get_history():
             return [history.to_dict() for history in self.history]
         else:
-            return None
+            return []
 
     def get_locations(self):
         dynamic_locations = [row.location for row in Device.query.with_entities(Device.location).distinct().all()]
@@ -116,8 +116,12 @@ class Device(db.Model, SerializerMixin):
             return self._add_device()
 
     def delete(self):
-        db.session.delete(self)
-        return self._commit()
+        db.session.delete(self.get())
+        try:
+            self._commit()
+            return {'message':'success'}
+        except Exception:
+            return {'error'}
     
     def import_ldap_device(self, device=None):
         if device:
@@ -139,7 +143,10 @@ class Device(db.Model, SerializerMixin):
             return None
     
     def sync_ldap(self):
-        return self.import_ldap_device(search(self.id)[0])
+        try:
+            return self.import_ldap_device(search(self.id)[0])
+        except Exception:
+            return False
     
     def scan(self):
         result = scan([self])[0]

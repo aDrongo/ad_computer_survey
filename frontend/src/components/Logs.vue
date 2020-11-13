@@ -53,7 +53,7 @@ export default {
   name: 'Logs',
   data(){
         return {
-            logs: null,
+            logs: [],
             filter: null,
             sortBy: "id",
             sortDesc: true,

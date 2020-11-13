@@ -2,13 +2,13 @@
  <div>
    <template v-if="locationDevices.length > 0">
     <div class="Location m-1" :id='location'>
-      <div class="row m-2">
-        <div class="col-">
-        <b-button  @click="$emit('opened-location', location)">
+      <div class="d-inline-flex m-1">
+        <div>
+        <b-button class="text-nowrap" @click="$emit('opened-location', location)">
           {{location}}
         </b-button>
         </div>
-        <div class="col-">
+        <div>
         <DevicesOverview v-bind:locationDevices="locationDevices" v-bind:location="location" v-on:scan-device="emitScanDevice"/>
         </div>
       </div>

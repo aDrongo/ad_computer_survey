@@ -60,6 +60,9 @@ td {
     display: inline-block;
     cursor: pointer;
 }
+tr td {
+    float: left;
+}
 .up, .down, .dns {
     border-radius: 0.25rem;
     cursor: pointer;
