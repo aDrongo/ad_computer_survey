@@ -29,12 +29,13 @@
     "secret_key": "somekey12345",
     "server": "server.internal.contoso.com",
     "subnet_dict": {
+        "127.0.0.1/32": "LAN",
         "10.0.0.0/8": "LAN",
         "172.16.0.0/12": "LAN",
         "192.168.0.0/16": "LAN",
         "0.0.0.0/0": "Global"
     },
-    "ldap_enabled": "true",
+    "ldap_enabled": "false",
     "scan_schedule": "300",
     "admin_password": "testing1234",
     "user_name": "contoso\\user",

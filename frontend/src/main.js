@@ -9,7 +9,7 @@ Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
 Vue.config.productionTip = false
 
-axios.defaults.baseURL = window.location.origin.split(':')[0] + ':' + window.location.origin.split(':')[1] + ":5000"
+axios.defaults.baseURL = window.location.origin + "/api"
 
 console.log(axios.defaults.baseURL)
 

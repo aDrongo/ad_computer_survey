@@ -19,7 +19,7 @@ axios.interceptors.request.use(
 export default {
     async getDevices() {
         try {
-            const response = await axios.get('/api/devices')
+            const response = await axios.get('/devices')
             return response.data
         } catch (error) {
             console.log(error.response)
@@ -28,7 +28,7 @@ export default {
     },
     async getDevice(id) {
         try {
-            const response = await axios.get('/api/device/' + id)
+            const response = await axios.get('/device/' + id)
             return response.data
         } catch (error) {
             console.log(error.response)
@@ -37,7 +37,7 @@ export default {
     },
     async getLocations() {
         try {
-            const response = await axios.get('/api/locations')
+            const response = await axios.get('/locations')
             return response.data
         } catch (error) {
             console.log(error.response)
@@ -46,7 +46,7 @@ export default {
     },
     async scanDevice(id){
         try {
-            const response = await axios.get('/api/scan/' + id)
+            const response = await axios.get('/scan/' + id)
             return response.data
         } catch (error) {
             console.log(error.response)
@@ -55,7 +55,7 @@ export default {
     },
     async scanAll(){
         try {
-            const response = await axios.get('/api/scan')
+            const response = await axios.get('/scan')
             return response.data
         } catch (error) {
             console.log(error.response)
@@ -64,7 +64,7 @@ export default {
     },
     async addDevice(id){
         try {
-            const response = await axios.post('/api/device/' + id)
+            const response = await axios.post('/device/' + id)
             return response.data
         } catch (error) {
             console.log(error.response)
@@ -73,7 +73,7 @@ export default {
     },
     async removeDevice(id){
         try {
-            const response = await axios.delete('/api/device/' + id)
+            const response = await axios.delete('/device/' + id)
             return response.data
         } catch (error) {
             console.log(error.response)
@@ -82,7 +82,7 @@ export default {
     },
     async getLogs(){
         try {
-            const response = await axios.get('/api/history')
+            const response = await axios.get('/history')
             return response.data
         } catch (error) {
             console.log(error.response)
@@ -98,7 +98,7 @@ export default {
         };
         let data = {}
         try {
-            const response = await axios.post('/api/login', data, axiosConfig)
+            const response = await axios.post('/login', data, axiosConfig)
             return response
         } catch (error) {
             console.log(error.response)
@@ -107,7 +107,7 @@ export default {
     },
     async checkAuth(){
         try {
-            const response = await axios.get('/api/login')
+            const response = await axios.get('/login')
             return response
         } catch (error) {
             return error.response
@@ -115,7 +115,7 @@ export default {
     },
     async getUsers(){
         try {
-            const response = await axios.get('/api/users')
+            const response = await axios.get('/users')
             return response
         } catch (error) {
             console.log(error.response)
@@ -131,7 +131,7 @@ export default {
         };
         let data = {}
         try {
-            const response = await axios.post('/api/users', data, axiosConfig)
+            const response = await axios.post('/users', data, axiosConfig)
             return response
         } catch (error) {
             console.log(error.response)
@@ -145,7 +145,7 @@ export default {
             }
         };
         try {
-            const response = await axios.delete('/api/users', axiosConfig)
+            const response = await axios.delete('/users', axiosConfig)
             return response
         } catch (error) {
             console.log(error.response)

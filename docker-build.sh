@@ -1,7 +1,10 @@
-docker rm -f lds-backend
-docker build backend/ -t lds-backend
-docker run -p 5000:5000 -d --restart always --name lds-backend lds-backend
+docker network create lds
 
-docker rm -f lds-frontend
-docker build /fronted -t lds-frontend
-docker run -p 80:80 -d --restart always -d lds-frontend
+docker build router/ -t lds-router
+docker run -p 80:80 -p 443:443 -d --restart always --network lds --name lds-router lds-router
+
+docker build backend/ -t lds-backend
+docker run -p 5000:5000 -d --restart always --network lds --name lds-backend lds-backend
+
+docker build frontend/ -t lds-frontend
+docker run -p 8080:8080 -d --restart always --network lds --name lds-frontend lds-frontend
