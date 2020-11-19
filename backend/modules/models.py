@@ -52,16 +52,17 @@ class Devices():
         return [d.update() for d in self.devices]
     
     def sync_ldap(self):
-        for ldap_device in search():
-            found = False
-            for device in self.devices:
-                if device.id == ldap_device.cn.value:
-                    device.import_ldap_device(ldap_device)
-                    found = True
-                    break
-            if not (found):
-                self.devices.append(Device().import_ldap_device(ldap_device))
-        return self.devices
+        ldap_devices = search()
+        if ldap_devices:
+            for ldap_device in ldap_devices:
+                found = False
+                for device in self.devices:
+                    if device.id == ldap_device.cn.value:
+                        device.import_ldap_device(ldap_device)
+                        found = True
+                        break
+                if not (found):
+                    self.devices.append(Device().import_ldap_device(ldap_device))
 
     def scan(self):
         self.devices = scan(self.devices)

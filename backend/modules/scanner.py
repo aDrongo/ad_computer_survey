@@ -71,8 +71,8 @@ def interpret_ping_result(ping_result, ping_code, device):
         device.location = get_location(ping_result)
         device.ping_time = get_time(ping_result)
     else:
-        device.location = 'unknown'
-        device.ip = '-'
+        device.location = 'Unknown'
+        device.ip = '0.0.0.0'
         device.ping_time = '0.0'
     return device
 
@@ -96,4 +96,4 @@ def get_location(string):
     for key in subnets:
         if (ip in netaddr.IPNetwork(key)):
             return subnets[key]
-    return 'unknown'
+    return 'Unknown'
