@@ -57,13 +57,7 @@ export default {
       }
       else if (!pause) {
         this.interval = setInterval(async function() {
-          await Api.checkAuth().then((response) => {
-            if (response.status != 200){
-              if (this.user && this.user != "null"){
-                this.logout()
-              }
-            }
-          })
+          await this.checkLoggedIn()
           await this.refreshData()
         }.bind(this),60000);
       }
@@ -93,6 +87,16 @@ export default {
         }
         results.sort((a,b) => (a.ping_code < b.ping_code) ? 1 : -1)
         return results
+    },
+
+    async checkLoggedIn() {
+      await Api.checkAuth().then((response) => {
+        if (response.status != 200){
+          if (this.user && this.user != "null"){
+            this.logout()
+          }
+        }
+      })
     },
 
     logout(){
@@ -190,8 +194,11 @@ export default {
       }
     }
   },
+  
   created() {
-    this.user = localStorage.getItem('lds-user')
+    this.checkLoggedIn();
+    if (localStorage.getItem('lds-user') != "null") this.user = localStorage.getItem('lds-user');
+
     Api.getDevices()
       .then(
         devices => {
@@ -208,17 +215,12 @@ export default {
       .finally(() => {
         this.loading_locations = false
     });
+
   },
 
-  mounted() {
+  mounted () {
     this.interval = setInterval(async function() {
-      await Api.checkAuth().then((response) => {
-        if (response.status != 200){
-          if (this.user && this.user != "null"){
-            this.logout()
-          }
-        }
-      })
+      await this.checkLoggedIn()
       await this.refreshData()
     }.bind(this),60000);
   },

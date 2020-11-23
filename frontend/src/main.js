@@ -9,9 +9,9 @@ Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
 Vue.config.productionTip = false
 
+//switch if not using a reverse proxy.
+//axios.defaults.baseURL = window.location.origin.split(':')[0] + ':' + window.location.origin.split(':')[1] + ":5000/api"
 axios.defaults.baseURL = window.location.origin + "/api"
-
-console.log(axios.defaults.baseURL)
 
 new Vue({
   render: h => h(App),
