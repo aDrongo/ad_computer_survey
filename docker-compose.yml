@@ -1,0 +1,42 @@
+version: "3"
+
+services:
+  lds-backend:
+    container_name: lds-backend
+    build: backend/
+    ports:
+      - "5000:5000"
+    # Mount for persistance
+    volumes:
+      - db-data:/opt/ldap-device-surveyor/backend/database/
+    networks:
+      - lds
+  lds-frontend:
+    container_name: lds-frontend
+    build: frontend/
+    ports:
+      - "5001:5001"
+    networks:
+      - lds
+  lds-router:
+    container_name: lds-router
+    build: router/
+    ports:
+      - "80:80"
+    # HTTPS Settings:
+      # - "443:443"
+    # Allow certificates to be renewed
+    # volumes:
+      #  - ./router/certs/:/etc/nginx/certs/
+    depends_on:
+      - lds-backend
+      - lds-frontend
+    networks:
+      - lds
+
+volumes:
+  db-data:
+
+networks:
+  lds:
+    driver: bridge

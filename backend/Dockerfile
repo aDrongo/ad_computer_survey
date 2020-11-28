@@ -1,20 +1,16 @@
-FROM ubuntu:latest
+FROM python:3
 LABEL maintainer="ben gardner <mail@ben-gardner.com>"
 
 RUN mkdir /opt/ldap-device-surveyor/backend/ -p
-COPY . /opt/ldap-device-surveyor/backend/
-
-RUN apt-get update && \
-apt-get install -y --no-install-recommends \
-python3.8 python3-pip iputils-ping && \
-pip3 install -r /opt/ldap-device-surveyor/backend/requirements.txt
 
 WORKDIR /opt/ldap-device-surveyor/backend/
 
+COPY . .
+
+RUN pip3 install -r /opt/ldap-device-surveyor/backend/requirements.txt
+
 EXPOSE 5000
 ENTRYPOINT ["gunicorn","--bind", "0.0.0.0:5000", "wsgi:application"]
-#Insert following to entrypoint array for SSL
-# ,"--certfile=server.crt", "--keyfile=server.key"
 
 #Development optional server
-#ENTRYPOINT ["/bin/python3.8","/opt/ldap-device-surveyor/backend/main.py"]
+#ENTRYPOINT ["python","/opt/ldap-device-surveyor/backend/app.py"]
